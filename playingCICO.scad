@@ -1,58 +1,100 @@
 echo(version=version());
 
-cupDiameter = 40;
-coilDiameter = 12;
-coilInnerDiameter = 9;
+// Values are in millimeters
 
-// Cup bottom
-difference() {
-cylinder(h = 10, d=cupDiameter);
-translate([0, 0, 7.5]) union() {
-    // nub for an O-ring to better hold onto cup
-    translate([0, 0, 1]) cylinder(h = 1, d=(cupDiameter-2));
-    cylinder(h=6, d=(cupDiameter-4));
-}
-translate([0, 0, -1])
-    cylinder(h=7.5, d=(cupDiameter-4));
+////////////////////////////
+// Adjust these for cup and coil
+cupDiameter = 60;
+coilDiameter = 30;
+coilInnerDiameter = 25;
+coilThickness = 2;
 
-rotate([90,0,0])
-    translate([0, 5, ((cupDiameter/2) - 2.5)])
-        #cylinder(h=3, r=1);
-}
+wallThickness = 2;
+baseThickness = 4;
 
-// Lid for bottom.
-translate([cupDiameter+5,0,0]) {
+circuitDepth = 20; // how much space for the circuits
+cupDepth = 10; // How much space to grab the cup
+chargeDepth = 5; // How much space for the charging circuits
+
+nubWidth = 5;
+nubHeight = 3;
+
+////////////////////////////
+//
+caseDiameter = cupDiameter + (wallThickness * 2); 
+circuitDiameter = cupDiameter - (wallThickness *2);
+innerWall = caseDiameter - cupDiameter;
+
+
+// Bottom Cup piece.  Where the circuits live.
+translate([0,0,0]) {
     difference() {
-        union() {
-            cylinder(h = 1, d=cupDiameter);
-            cylinder(h = 2, d=(cupDiameter-4));
-        }
-        translate([0,0,0.5])
+        cylinder(h=circuitDepth+cupDepth+baseThickness, d=caseDiameter);
+
+        // Cut out a place for the circuits
+        translate([0,0,baseThickness]) cylinder(h=circuitDepth+3, d=circuitDiameter);
+        
+        // Cut out a place for the cup
+        translate([0,0,baseThickness+circuitDepth]) cylinder(h=cupDepth+3, d=cupDiameter);
+
+        // Cut out a place for the coil
+        translate([0,0,1+baseThickness-coilThickness])
             difference() {
-                cylinder(h=2, d=coilDiameter);
-                cylinder(h=2, d=coilInnerDiameter);
+                cylinder(h=coilThickness, d=coilDiameter);
+                cylinder(h=coilThickness, d=coilInnerDiameter);
             }
+        // Cut out a hole for the alignment nub.
         translate([0,0,-0.5])
-            cylinder(h=2, d=3);
+            cylinder(h=nubHeight, d=nubWidth);
+
+        // Cut out a hole to let wires through
+        rotate([90,0,0])
+            translate([0, circuitDepth, ((caseDiameter/2) - 5)])
+                #cylinder(h=innerWall+2, r=2);
+
+        // Cut a place for an O-ring to better grip the cup.
+        //translate([0,0,circuitDepth+cupDepth-1]) cylinder(h=baseThickness, d=cupDiameter+wallThickness);
+        // Not sure about this.
     }
-    
 }
 
-// Charging Base
+// Base plate that goes above circuits and below cup.
+translate([0,cupDiameter+5,0]) {
+    cylinder(h=baseThickness, d=cupDiameter);
+}
+
+// Charging Base curcuit holder
 translate([-(cupDiameter+5),0,0]) {
     difference() {
+        cylinder(h=baseThickness+baseThickness+chargeDepth, d=caseDiameter);
+
+        // Cut out a spot for the circuits
+        translate([0,0,baseThickness]) cylinder(h=baseThickness+baseThickness+chargeDepth, d=circuitDiameter);
+
+        // Cut out a lip to hold lid
+        translate([0,0,baseThickness+chargeDepth]) cylinder(h=baseThickness*2, d=cupDiameter);
+
+        // Cut out spot for power connector (USB?)
+        translate([0, -((caseDiameter/2)+(innerWall/2)), baseThickness])
+            #cube(size=[5,innerWall*2,3]);
+    }
+}
+
+// Charging Base top plate.
+translate([-(cupDiameter+5),cupDiameter+5,0]) {
+    difference() {
         union() {
-            cylinder(h=4, d=cupDiameter);
-            translate([0,0,4]) cylinder(h=1, d1=3, d2=1);
+            cylinder(h=baseThickness, d=cupDiameter);
+            // Add alignment nub
+            translate([0,0,baseThickness]) cylinder(h=nubHeight, d1=nubWidth, d2=nubWidth-1);
         }
-        translate([0,0,-1]) cylinder(h=4, d=(cupDiameter-4));
-        translate([0,0,1.5])
+
+        // Cut out spot for coil
+        translate([0,0,1+baseThickness-coilThickness])
             difference() {
                 cylinder(h=2, d=coilDiameter);
                 cylinder(h=2, d=coilInnerDiameter);
             }
-        translate([0, -((cupDiameter/2)-1), 1.5])
-            #cube(size=[2,4,1], center=true);
-
     }
 }
+//  vim: set et ai sw=4 ts=4 :
