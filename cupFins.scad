@@ -12,7 +12,7 @@ TEGsize = 40;
 
 ////////////////////////////
 // Plate to connect cup to TEG
-rotate([90,0,0])
+rotate([0,0,0])
 difference() {
 	cube(size=[TEGsize,TEGsize,10]);
 	
@@ -20,9 +20,9 @@ difference() {
 		rotate([-90,0,0])
 			cylinder(h=TEGsize+5, d=cupDiameter);
 }
-
+/*
 ////////////////////////////
-// Cooling fins.  Might just find a CPU heatsink instead
+// Cooling fins.  Will just find a CPU heatsink instead
 finThick=3;
 finGap=3;
 module FinGrid() {
@@ -39,5 +39,5 @@ difference() {
 	FinGrid();
 	translate([TEGsize,0,0]) rotate([0, 0, 90]) FinGrid();
 }
-
+*/
 //  vim: set sw=4 ts=4 :
