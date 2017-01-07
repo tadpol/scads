@@ -44,10 +44,11 @@ mountingScrewLength = wallThickness*3 + featherDepth;
 
 // Want to try replacing the mountingScrew with small zip-ties.
 sztWidth = 3; // X
-sztThick = 1; // Y
+sztThick = 1.5; // Y
 sztXinset = 2;
 sztYinset = 1;
-sztHeadThick = 2;
+sztHeadWidth = 5;
+sztHeadThick = 3.5;
 
 baseSize = featherLength;
 
@@ -97,8 +98,9 @@ difference() {
 			cylinder(h=baseSize+5, d=cupDiameter);
 
 	// Cutout path for zip-tie.
+	// FIXME: requires magic number to get placed correctly; don't do that.
 	rotate([90,0,0])
-	translate([baseSize/2,baseSize,-baseSize/2])
+	translate([baseSize/2,baseSize - 12,-baseSize/2 - 5])
 		difference() {
 			cylinder(h=zipTieWidth, d=cupDiameter+(zipTieThick*2));
 			translate([0,0,-1])
@@ -106,7 +108,7 @@ difference() {
 		}
 
 	// cutout for mounting zip-ties
-	zip_tie_cutout(depth=wallThickness);
+	zip_tie_cutout(depth=wallThickness+0.5);
 	// side-extention cutouts
 	zip_tie_extra_cutout(depth=wallThickness) {
 		cube(size=[5,sztWidth,sztThick]);
