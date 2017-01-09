@@ -73,6 +73,20 @@ module zip_tie_extra_cutout(depth = featherDepth) {
 		}
 	}
 }
+module zip_tie_extra_cutout2(depth = featherDepth) {
+// Lots of magic number here.
+	translate([-sztXinset+1, sztYinset, depth + 1.5 + 2.5])
+		children();
+	translate([-sztXinset+1, baseSize-sztWidth-sztYinset, depth + 1.5 + 2.5])
+		children();
+
+	translate([baseSize-sztThick-sztXinset, sztYinset, depth+1.5])
+		mirror([0,0,1])
+			children();
+	translate([baseSize-sztThick-sztXinset, baseSize-sztWidth-sztYinset, depth+1.5])
+		mirror([0,0,1])
+			children();
+}
 
 module screw_cutout() {
 	for(ox=[mountingScrewD/2+1,baseSize-(mountingScrewD/2)-1]) {
@@ -106,9 +120,10 @@ difference() {
 		}
 
 	// cutout for mounting zip-ties
-	zip_tie_cutout(depth=wallThickness+0.5);
+	zip_tie_cutout(depth=(wallThickness/2)+0.5);
 	// side-extention cutouts
-	zip_tie_extra_cutout(depth=wallThickness) {
+	zip_tie_extra_cutout2(depth=wallThickness/2) {
+		rotate([0,45,0])
 		cube(size=[5,sztWidth,sztThick]);
 	}
 
