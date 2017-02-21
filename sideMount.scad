@@ -212,15 +212,14 @@ union() {
 
 ////////////////////////////
 // Holder for temperature sensors
-*translate([baseSize+5,baseSize+5,0])
-difference(){
-	union() {
-		cube(size=[5,40,5]);
-		translate([0,40,0])
+translate([baseSize+5,baseSize+5,0])
+union() {
+		cube(size=[5,30,5]);
+		translate([0,30,0])
+			difference() {
 			cube(size=[15,5,5]);
-	}
-
-	translate([10,40,0])
-		zip_tie_cutout();
+			translate([10,0,0])
+				zip_tie_cutout();
+		}
 }
 //	vim: set ai sw=2 ts=2 :
