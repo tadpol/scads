@@ -18,7 +18,7 @@ zipTieWidth = 5;
 zipTieThick = 2;
 zipToCup = 2; // Amount of material between the cup and the zip-tie
 
-coilDiameter = 38.5;
+coilDiameter = 39;
 coilInnerDiameter = 29.5; //32.5;
 coilThickness = 2;
 
@@ -217,8 +217,8 @@ union() {
 		cube(size=[5,30,5]);
 		translate([0,30,0])
 			difference() {
-			cube(size=[15,5,5]);
-			translate([10,0,0])
+			cube(size=[15-2.5,5,5]);
+			translate([10-2.5,0,0])
 				zip_tie_cutout();
 		}
 }
