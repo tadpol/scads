@@ -98,6 +98,7 @@ module screw_cutout() {
 }
 ////////////////////////////
 // Lower part
+union() {
 difference() {
 	cube(size=[baseSize,baseSize,15]);
 
@@ -132,6 +133,18 @@ difference() {
 	rotate([0,-25,0])
 		translate([0,0,-(cupDiameter/2)-2.4])
 			cube(size=[5.1,10,5.1], center=true);
+}
+translate([baseSize/2-2.5,0,0])
+rotate([0,-90,180])
+union() {
+		cube(size=[2,15,5]);
+		translate([0,15,0])
+			difference() {
+			cube(size=[15-2.5,5,5]);
+			translate([10-2.5,0,0])
+				zip_tie_cutout();
+		}
+}
 }
 
 ////////////////////////////
