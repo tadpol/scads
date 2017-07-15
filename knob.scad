@@ -8,13 +8,11 @@ featherLength = 51;
 featherDepth = 8; // includes components
 featherCircuitDepth = 2;
 featherMinSize = sqrt(pow(featherWidth,2)+pow(featherLength,2));
-echo(featherMinSize);
 
 featherTFTWidth = 65.0;
 featherTFTLength = 53;
 featherTFTHight = 9.5;
 featherTFTMinSize = sqrt(pow(featherTFTWidth,2)+pow(featherTFTLength,2));
-echo(featherTFTMinSize);
 
 ring24_outter = 65.6;
 ring24_inner = 52.3;
@@ -47,23 +45,23 @@ baseBumps = 2;
 //rings
 module ring(o,i,h) {
 	difference(){
-			cylinder(h=h, r=o);
+			cylinder(h=h, d=o);
 		translate([0,0,-0.1])
-			cylinder(h=h+0.2, r=i);
+			cylinder(h=h+0.2, d=i);
 	}
 }
 
 module ring_support_spoke(width=10, depth=2) {
 	difference() {
-		translate([-ring24_outter,-(width/2),0])
-			cube([ring24_outter*2, width, depth]);
+		translate([-ring24_outter/2,-(width/2),0])
+			cube([ring24_outter, width, depth]);
 		translate([0,0,-0.1])
 			ring(ring24_outter+3, ring24_outter, ring24_thick);
 	}
 	// edges to hold outer most ring
 	difference() {
-		translate([-(ring24_outter-1),-(width/2),depth])
-			cube([(ring24_outter-1)*2, width, depth]);
+		translate([-(ring24_outter-1)/2,-(width/2),depth])
+			cube([(ring24_outter-1), width, depth]);
 		translate([0,0,depth-0.1]) {
 			ring(ring24_outter, ring24_inner, ring24_thick);
 		}
@@ -163,7 +161,7 @@ module curve_edge(r=10,h=5,deg=90,thick=1) {
 	}
 }
 
-!union() {
+union() {
 	difference() {
 		union() {
 			cylinder(h=baseHeight, r=(knobSize/2)-(knobThick)-knobGap);
