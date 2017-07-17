@@ -9,11 +9,33 @@ featherDepth = 8; // includes components
 featherCircuitDepth = 2;
 featherMinSize = sqrt(pow(featherWidth,2)+pow(featherLength,2));
 
+// TODO: Add wing that will hold level shifter, cap, and resistors.
+// XXX Include header heights!
+// [width, length, depth]
+featherWing = [23, 51, 8]; // 8+?
+
+// 5V barrel jack
+// https://cdn-shop.adafruit.com/datasheets/21mmdcjackDatasheet.pdf
+module jack() {
+	cube([3.5, 9,11]);
+	cube([14.4,9,6.5]);
+	translate([0,9/2,6.5])
+		rotate([0,90,0])
+			cylinder(d=9,h=14.4);
+	translate([10.7,-0.5,-3.5])
+		cube([1,0.5,3.5]);
+	translate([7.7,4,-3.5])
+		cube([0.5,1,3.5]);
+	translate([13.7,4,-3.5])
+		cube([0.5,1,3.5]);
+}
+
+/*
 featherTFTWidth = 65.0;
 featherTFTLength = 53;
 featherTFTHight = 9.5;
 featherTFTMinSize = sqrt(pow(featherTFTWidth,2)+pow(featherTFTLength,2));
-
+*/
 ring24_outter = 65.6;
 ring24_inner = 52.3;
 ring24_thick = 3.6;
@@ -30,7 +52,7 @@ ringJ_thick = 3.6;
 knobThick=2;
 //knobSize=featherMinSize + (knobThick*2);
 //knobSize=featherTFTMinSize + (knobThick*2);
-knobSize=max(ring24_outter, featherMinSize) + (knobThick*2);
+knobSize=max(ring24_outter+1, featherMinSize) + (knobThick*2);
 echo(knobSize);
 knobHeight=20;
 knobGap=0.3;
@@ -41,6 +63,8 @@ bumpSize=3;
 
 baseHeight=10;
 baseBumps = 2;
+
+baseBottomHeight = 10;
 
 //rings
 module ring(o,i,h) {
@@ -74,6 +98,7 @@ module ring_support_spoke(width=10, depth=2) {
 			ring(ringJ_outter, ringJ_inner, ringJ_thick);
 	}
 }
+translate([0,0,knobHeight - ring24_thick - knobLipHeight - 2])
 union() {
 	ring_support_spoke();
 	rotate([0,0,90]) ring_support_spoke();
@@ -87,7 +112,6 @@ union() {
 	}
 }
 
-// TODO: Need a support/mount to hold the feather.
 
 // knob
 union() {
@@ -161,7 +185,7 @@ module curve_edge(r=10,h=5,deg=90,thick=1) {
 	}
 }
 
-union() {
+!union() {
 	difference() {
 		union() {
 			cylinder(h=baseHeight, r=(knobSize/2)-(knobThick)-knobGap);
@@ -184,11 +208,23 @@ union() {
 					curve_edge(r=knobSize/2-knobThick-knobGap+0.1, h=1.5, deg=45, thick=2.1);
 			}
 		}
-	}
-	translate([0,0,-4]) {
-		cylinder(h=4,r=knobSize/2);
+
+		translate([-(featherWidth+0.4)/2, -(featherLength+0.4)/2, baseHeight-featherDepth+1])
+			cube([featherWidth+0.4, featherLength+0.4, featherDepth]);
+	// TODO: cut out for USB port.
+	// TODO: cutout for wires from barrel jack
 	}
 
+	// Bottom Base.
+	// TODO: cutout for 5V barrel jack.
+	difference(){
+		translate([0,0,-baseBottomHeight]) {
+			cylinder(h=baseBottomHeight,r=knobSize/2);
+		}
+		rotate([90,0,90])
+			translate([-knobSize/2,-(baseBottomHeight-.5),-4.5])
+				jack();
+	}
 }
 
 
