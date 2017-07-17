@@ -14,22 +14,6 @@ featherMinSize = sqrt(pow(featherWidth,2)+pow(featherLength,2));
 // [width, length, depth]
 featherWing = [23, 51, 8]; // 8+?
 
-// 5V barrel jack
-// https://cdn-shop.adafruit.com/datasheets/21mmdcjackDatasheet.pdf
-module jack() {
-	cube([3.5, 9,11]);
-	cube([14.4,9,6.5]);
-	translate([0,9/2,6.5])
-		rotate([0,90,0])
-			cylinder(d=9,h=14.4);
-	translate([10.7,-0.5,-3.5])
-		cube([1,0.5,3.5]);
-	translate([7.7,4,-3.5])
-		cube([0.5,1,3.5]);
-	translate([13.7,4,-3.5])
-		cube([0.5,1,3.5]);
-}
-
 /*
 featherTFTWidth = 65.0;
 featherTFTLength = 53;
@@ -216,14 +200,12 @@ module curve_edge(r=10,h=5,deg=90,thick=1) {
 	}
 
 	// Bottom Base.
-	// TODO: cutout for 5V barrel jack.
+	// barrel jack seems too big. Can flip and drop feather far enough to go strieght
+	// into USB jack?
 	difference(){
 		translate([0,0,-baseBottomHeight]) {
 			cylinder(h=baseBottomHeight,r=knobSize/2);
 		}
-		rotate([90,0,90])
-			translate([-knobSize/2,-(baseBottomHeight-.5),-4.5])
-				jack();
 	}
 }
 
