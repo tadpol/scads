@@ -5,7 +5,7 @@ $fn=0;
 
 featherWidth = 23;
 featherLength = 51;
-featherDepth = 8; // includes components
+featherDepth = 8; // includes components; LIPO jack is tallest
 featherCircuitDepth = 2;
 featherMinSize = sqrt(pow(featherWidth,2)+pow(featherLength,2));
 
@@ -48,6 +48,8 @@ bumpSize=3;
 baseHeight=10;
 baseBumps = 2;
 
+usbMicroBPlug = [12.33,29.1,8.04];
+baseBottomThickness = 2;
 baseBottomHeight = 10;
 
 //rings
@@ -180,6 +182,10 @@ module curve_edge(r=10,h=5,deg=90,thick=1) {
 					}
 				}
 			}
+			// Bottom Base.
+			translate([0,0,-baseBottomHeight]) {
+				cylinder(h=baseBottomHeight,r=knobSize/2);
+			}
 		}
 
 		for(step=[10 : (360/baseBumps) : 370]) {
@@ -193,19 +199,12 @@ module curve_edge(r=10,h=5,deg=90,thick=1) {
 			}
 		}
 
-		translate([-(featherWidth+0.4)/2, -(featherLength+0.4)/2, baseHeight-featherDepth+1])
-			cube([featherWidth+0.4, featherLength+0.4, featherDepth]);
-	// TODO: cut out for USB port.
-	// TODO: cutout for wires from barrel jack
-	}
-
-	// Bottom Base.
-	// barrel jack seems too big. Can flip and drop feather far enough to go strieght
-	// into USB jack?
-	difference(){
-		translate([0,0,-baseBottomHeight]) {
-			cylinder(h=baseBottomHeight,r=knobSize/2);
-		}
+		translate([-(featherWidth+0.4)/2, -(featherLength+0.4)/2, -baseBottomHeight+baseBottomThickness])
+			cube([featherWidth+0.4, featherLength+0.4, baseHeight+baseBottomHeight]);
+		// TODO: cut out for USB port.
+		translate([-(10)/2, (featherLength+0.4)/2-1, -baseBottomHeight+baseBottomThickness])
+			scale([1.1,1.1,1.1])
+				cube(usbMicroBPlug);
 	}
 }
 
