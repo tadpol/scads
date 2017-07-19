@@ -3,13 +3,13 @@ $fs=1;
 $fa=1;
 $fn=0;
 
+// [width, length, depth]
 feather = [23,51,8];
 //featherCircuitDepth = 2;
 featherMinSize = sqrt(pow(feather[0],2)+pow(feather[1],2));
 
-// TODO: Add wing that will hold level shifter, cap, and resistors.
-// XXX Include header heights!
-// [width, length, depth]
+// Add wing that will hold level shifter, cap, and resistors.
+// Not too worried, looks like we'll have plenty of open space.
 featherWing = [23, 51, 8]; // 8+?
 
 // SparkFun ESP32 Thing
@@ -55,6 +55,9 @@ baseBottomThickness = 2;
 baseBottomHeight = 10;
 circuitGap = 0.4;
 circuitGapV = [circuitGap,circuitGap,circuitGap];
+
+
+useBallSwitch = true;
 
 //rings
 module ring(o,i,h) {
@@ -175,31 +178,73 @@ module curve_edge(r=10,h=5,deg=90,thick=1) {
 	}
 }
 
+module ballSwitch() {
+	union() {
+	//%cube([7.2, 7.2, 10.5]);
+	translate([0.5,0,4.5]) {
+		translate([3.5,3.5,1.9]) {
+			cylinder(r=3,h=2.1);
+			translate([0,0,2])
+				sphere(r=2);
+		}
+		cube([7,7,2]);
+	}
+	// pins
+	cube([0.5,1,4.5]);
+	translate([0,6,0]) cube([0.5,1,4.5]);
+	translate([7.5,0,0]) cube([0.5,1,4.5]);
+	translate([7.5,6,0]) cube([0.5,1,4.5]);
+	}
+}
+
 !union() {
 	difference() {
 		union() {
 			cylinder(h=baseHeight, r=(knobSize/2)-(knobThick)-knobGap);
-			for(step=[0 : (360/baseBumps) : 360]) {
-				rotate([0,0,step]) {
-					translate([(knobSize/2)-(knobThick)-knobGap,0,baseHeight/2]) {
-						sphere(d=bumpSize, $fs=0.1);
+
+			// Add the bumps for clicking
+			if (useBallSwitch) {
+			} else {
+				for(step=[0 : (360/baseBumps) : 360]) {
+					rotate([0,0,step]) {
+						translate([(knobSize/2)-(knobThick)-knobGap,0,baseHeight/2]) {
+							sphere(d=bumpSize, $fs=0.1);
+						}
 					}
 				}
 			}
+
 			// Bottom Base.
 			translate([0,0,-baseBottomHeight]) {
 				cylinder(h=baseBottomHeight,r=knobSize/2);
 			}
 		}
 
-		for(step=[10 : (360/baseBumps) : 370]) {
-			rotate([0,0,step]) {
-				translate([(knobSize/2)-knobThick-knobGap-2,0,0]) {
-					cube([2,1,baseHeight+1]);
+		if (useBallSwitch) {
+			// TODO: Don't forget that they need to be inserted somehow!
+			// FIXME: One needs to be on the ridge of a divit while the other is inside.
+			//for(step=[0 : (360/baseBumps) : 360]) {
+			for(step=[0, 185]) { // What is the right degree? How to math it?
+				rotate([0,0,step]) {
+					translate([(knobSize/2)-(knobThick)-knobGap-9,-3.5,baseHeight/2+3.5]) {
+						rotate([0,90,0]) ballSwitch();
+					}
+					translate([(knobSize/2)-(knobThick)-knobGap-9,-3.5,baseHeight/2]) {
+						cube([7,7,10]);
+					}
 				}
-				curve_edge(r=knobSize/2-knobThick-knobGap-1, h=baseHeight+1, deg=45);
-				translate([0,0,-0.5])
-					curve_edge(r=knobSize/2-knobThick-knobGap+0.1, h=1.5, deg=45, thick=2.1);
+			}
+		} else {
+			// Cutout for spring tabs.
+			for(step=[10 : (360/baseBumps) : 370]) {
+				rotate([0,0,step]) {
+					translate([(knobSize/2)-knobThick-knobGap-2,0,0]) {
+						cube([2,1,baseHeight+1]);
+					}
+					curve_edge(r=knobSize/2-knobThick-knobGap-1, h=baseHeight+1, deg=45);
+					translate([0,0,-0.5])
+						curve_edge(r=knobSize/2-knobThick-knobGap+0.1, h=1.5, deg=45, thick=2.1);
+				}
 			}
 		}
 
