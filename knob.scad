@@ -105,22 +105,30 @@ union() {
 	}
 }
 
+module ring_of_cyliners(h=5, cr=3, rr=20) {
+	pi = 3.1416;
+	// How many degrees each cylinder needs at a distance of cr from 0
+	degrees = (180 * (cr*2)) / (rr*pi);
+	for(step=[0 : degrees : 360]) {
+		rotate([0,0,step]) {
+			translate([rr,0,-(h/2)]) {
+				cylinder(h=h, r=cr);
+			}
+		}
+	}
+}
 
 // knob
-union() {
+!union() {
 	difference(){
 		cylinder(h=knobHeight, r=knobSize/2);
 		translate([0,0,-knobThick]) {
 			cylinder(h=knobHeight+knobThick+1, r=(knobSize/2)-knobThick);
 		}
 		// Need to make a ring of divits.  So a ring of cylinders cut out.
-		for(step=[0 : 4 : 360]) { // XXX How to calc step size so cylinders touch?
-			rotate([0,0,step]) {
-				translate([(knobSize/2)-(knobThick),0,(baseHeight/2)-(bumpSize/2)]) {
-					cylinder(h=(bumpSize), r=(bumpSize/2), $fs=0.1);
-				}
-			}
-		}
+		translate([0,0,baseHeight/2])
+			ring_of_cyliners(h=bumpSize, cr=(bumpSize/2), rr=(knobSize/2)-(knobThick), $fs=0.1);
+
 		// Only baseBumps divits need to be full height.
 		for(step=[0 : (360/baseBumps) : 360]) {
 			rotate([0,0,step]) {
@@ -197,7 +205,7 @@ module ballSwitch() {
 	}
 }
 
-!union() {
+union() {
 	difference() {
 		union() {
 			cylinder(h=baseHeight, r=(knobSize/2)-(knobThick)-knobGap);
