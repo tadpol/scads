@@ -36,6 +36,27 @@ module ballSwitchCutout(h=40) {
 	}
 	cube([h,size[1],2.68]);
 }
+test=false;
+if(test) {
+	$fs=1;
+	$fa=1;
+	$fn=0;
+	difference() {
+		ballSwitchCutout(20);
+		translate([2,2,-.5]) linear_extrude(1) text(".00",5);
+	}
 
+	translate([0,10,0])
+		difference() {
+			scale([1,1.1,1.1]) ballSwitchCutout(20);
+			translate([2,2,-.5]) linear_extrude(1) text(".10",5);
+		}
+
+	translate([0,20,0])
+		difference() {
+			scale([1,1.05,1.05]) ballSwitchCutout(20);
+			translate([2,2,-.5]) linear_extrude(1) text(".05",5);
+		}
+}
 
 // vim: set ai sw=2 ts=2 :
