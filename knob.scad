@@ -91,10 +91,13 @@ module ring_support_spoke(width=10, depth=2) {
 			ring(ringJ_outter, ringJ_inner, ringJ_thick);
 	}
 }
-translate([0,0,knobHeight - ring24_thick - knobLipHeight - 2])
+ring_raised = knobHeight - ring24_thick - knobLipHeight - 2;
+translate([0,0,ring_raised])
 union() {
-	ring_support_spoke();
-	rotate([0,0,90]) ring_support_spoke();
+	rotate([0,0,45]) {
+		ring_support_spoke();
+		rotate([0,0,90]) ring_support_spoke();
+	}
 
 
 	%translate([0,0,2]) {
@@ -189,7 +192,7 @@ module curve_edge(r=10,h=5,deg=90,thick=1) {
 include <parts/ballSwitch.scad>
 
 // Ballswitch mount test
-!union(){
+/*union(){
 	difference() {
 		dr=12;
 		cylinder(h=baseHeight, r=dr);
@@ -201,20 +204,12 @@ include <parts/ballSwitch.scad>
 				// Maybe make the cube in the minkowski bigger? Tried that.
 				// Need to do this differently.  I think add a special object to create the
 				// cutout.
-					rotate([0,90,0]) ballSwitchCutout(baseHeight*2);
-					/*minkowski() {
-						rotate([0,90,0]) ballSwitch();
-						cube([0.3,0.3,baseHeight]);
-					}
-					hull() {
-						rotate([0,90,0]) ballSwitch();
-						translate([0,0,baseHeight/2]) rotate([0,90,0]) ballSwitch();
-						}*/
+				rotate([0,90,0]) ballSwitchCutout(baseHeight*2);
 				}
 			}
 		}
 	}
-}
+}*/
 
 union() {
 	difference() {
@@ -236,6 +231,18 @@ union() {
 			// Bottom Base.
 			translate([0,0,-baseBottomHeight]) {
 				cylinder(h=baseBottomHeight,r=knobSize/2);
+			}
+
+			// Supports for rings
+			for(i = [0,90,180,270]) {
+				rotate([0,0,45+i]) {
+					translate([(knobSize/2)-(knobThick)-knobGap-4,-6.5,0])
+						difference() {
+							cube([2,13,ring_raised+ring24_thick-1]);
+							translate([-0.5,0.75,ring_raised])
+								cube([3,11,ring24_thick]);
+						}
+				}
 			}
 		}
 
