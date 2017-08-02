@@ -36,7 +36,7 @@ module ballSwitchCutout(h=40) {
 	}
 	cube([h,size[1],2.68]);
 }
-test=false;
+test=true;
 if(test) {
 	$fs=1;
 	$fa=1;
@@ -56,6 +56,12 @@ if(test) {
 		difference() {
 			scale([1,1.05,1.05]) ballSwitchCutout(20);
 			translate([2,2,-.5]) linear_extrude(1) text(".05",5);
+		}
+
+	translate([0,30,0])
+		difference() {
+			resize([0,8,0]) ballSwitchCutout(20);
+			translate([2,2,-.5]) linear_extrude(1) text("rr",5);
 		}
 }
 
