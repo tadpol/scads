@@ -20,7 +20,7 @@ module ballSwitch() {
 		translate([size[0]+pin[0],size[1]-pin[1],0]) cube(pin);
 	}
 }
-module ballSwitchCutout(h=40, gap=0.3) {
+module ballSwitchCutout(h=40, gap=0.3, center=false) {
 	pin=[0.5,1,4.5];
 	size=[7.35,7.35,2.68];
 	ball=[3.75,3.75,3.75];
@@ -30,42 +30,49 @@ module ballSwitchCutout(h=40, gap=0.3) {
 		(outter_size[1]+gap*2)/outter_size[1],
 		(outter_size[2]+gap*2)/outter_size[2]];
 
-	scale([wgap[0],1,wgap[2]]) {
-		translate([pin[0],0,pin[2]]) {
-			translate([size[0]/2,size[1]/2,size[2]]) {
-				hull() {
-					cylinder(d=ring[0],h=ring[2]);
-					translate([0,h-size[1],0])
-						cylinder(d=ring[0],h=ring[2]);
-				}
-				translate([0,0,ring[2]])
-					hull() {
-						sphere(d=ball[0]);
-						translate([0,h-size[1],0]) sphere(d=ball[0]);
+	centered=center? [-outter_size[0]/2,-outter_size[1]/2,-outter_size[2]/2] : [0,0,0];
+	translate(centered) {
+		scale([wgap[0],1,wgap[2]]) {
+			translate([pin[0],0,pin[2]]) {
+				translate([size[0]/2,size[1]/2,size[2]]) {
+					translate([0,0,-1]) {
+						hull() {
+							cylinder(d=ring[0],h=ring[2]+1);
+							translate([0,h-size[1],0])
+								cylinder(d=ring[0],h=ring[2]+1);
+						}
 					}
-				// Button depresses 0.5mm
+					translate([0,0,ring[2]])
+						hull() {
+							sphere(d=ball[0]);
+							translate([0,h-size[1],0]) sphere(d=ball[0]);
+						}
+					// Button depresses 0.5mm
+				}
+				cube([size[0],h,size[2]]);
 			}
-			cube([size[0],h,size[2]]);
-		}
-		// open space for pins
-		difference() {
-			cube([size[0]+pin[0]*2,h,pin[2]]);
-			translate([size[0]/6+pin[0],-0.5,pin[2]/2])
-				cube([size[0]*2/3,h+1,pin[2]/2]);
-			translate([size[0]/3+pin[0],-0.5,-0.5])
-				cube([size[0]/3,h+1,pin[2]]);
+			// open space for pins
+			difference() {
+				cube([size[0]+pin[0]*2,h,pin[2]+1]);
+				translate([size[0]/6+pin[0],-0.5,pin[2]/2])
+					cube([size[0]*2/3,h+1,pin[2]/2]);
+				translate([size[0]/3+pin[0],-0.5,-0.5])
+					cube([size[0]/3,h+1,pin[2]]);
+			}
 		}
 	}
 }
 
-test=true;
+test=false;
 if(test) {
 	$fs=1;
 	$fa=1;
 	$fn=0;
 
+		!ballSwitchCutout(h=20,gap=0);
+
 	translate([0,0,0]) {
-		ballSwitchCutout(h=20,gap=0.1);
+		ballSwitchCutout(h=20,gap=0.1,center=true);
 	}
 
 	translate([10,0,0]) {
