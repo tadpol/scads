@@ -192,24 +192,19 @@ module curve_edge(r=10,h=5,deg=90,thick=1) {
 include <parts/ballSwitch.scad>
 
 // Ballswitch mount test
-/*union(){
+!union(){
 	difference() {
 		dr=12;
 		cylinder(h=baseHeight, r=dr);
-		for(step=[0, 185]) { // What is the right degree? How to math it?
+		for(step=[0, 180]) { // What is the right degree? How to math it?
 			rotate([0,0,step]) {
-				translate([dr-5.5,-3.5,(baseHeight*2)+baseHeight/6]) {
-				// FIXME: This is too tight.  Had to rebend pins and push hard to insert
-				// switch.  And am pretty sure it no longer works.
-				// Maybe make the cube in the minkowski bigger? Tried that.
-				// Need to do this differently.  I think add a special object to create the
-				// cutout.
-				rotate([0,90,0]) ballSwitchCutout(baseHeight*2);
+				translate([dr-4.75,0,2+(baseHeight+3)/2]) {
+					rotate([90,0,90]) ballSwitchCutout(baseHeight+3, center=true);
 				}
 			}
 		}
 	}
-}*/
+}
 
 union() {
 	difference() {
