@@ -38,7 +38,8 @@ ringJ_thick = 3.6;
 knobThick=2;
 //knobSize=featherMinSize + (knobThick*2);
 //knobSize=featherTFTMinSize + (knobThick*2);
-knobSize=max(ring24_outter+1, esp32ThingMinSize) + (knobThick*2);
+//knobSize=max(ring24_outter+1, esp32ThingMinSize) + (knobThick*2);
+knobSize = 24 + (knobThick*2);
 echo(knobSize);
 knobHeight=20;
 knobGap=0.3;
@@ -122,11 +123,11 @@ module ring_of_cyliners(h=5, cr=3, rr=20) {
 }
 
 // knob
-union() {
+!union() {
 	difference(){
 		cylinder(h=knobHeight, r=knobSize/2);
 		translate([0,0,-knobThick]) {
-			cylinder(h=knobHeight+knobThick+1, r=(knobSize/2)-knobThick);
+			cylinder(h=knobHeight+knobThick+1, r=(knobSize/2)-knobThick + 0.1);
 		}
 		// Need to make a ring of divits.  So a ring of cylinders cut out.
 		translate([0,0,baseHeight/2])
@@ -192,14 +193,14 @@ module curve_edge(r=10,h=5,deg=90,thick=1) {
 include <parts/ballSwitch.scad>
 
 // Ballswitch mount test
-!union(){
+union(){
 	difference() {
 		dr=12;
 		cylinder(h=baseHeight, r=dr);
 		for(step=[0, 180]) { // What is the right degree? How to math it?
 			rotate([0,0,step]) {
 				translate([dr-4.75,0,2+(baseHeight+3)/2]) {
-					rotate([90,0,90]) ballSwitchCutout(baseHeight+3, center=true);
+					rotate([90,0,90]) ballSwitchCutout(baseHeight+3, center=true, justcollar=true);
 				}
 			}
 		}
@@ -246,15 +247,9 @@ union() {
 			//for(step=[0 : (360/baseBumps) : 360]) {
 			for(step=[0, 185]) { // What is the right degree? How to math it?
 				rotate([0,0,step]) {
-					translate([(knobSize/2)-(knobThick)-knobGap-10,-3.5,baseHeight/2+3.5]) {
-						minkowski() {
-							rotate([0,90,0]) ballSwitch();
-							cube([0.1,0.1,baseHeight]);
-						}
-						/*hull() {
-							rotate([0,90,0]) ballSwitch();
-							translate([0,0,baseHeight/2]) rotate([0,90,0]) ballSwitch();
-						}*/
+					translate([(knobSize/2)-(knobThick)-knobGap-4.75,-3.5,baseHeight/2 + 2]) {
+						rotate([90,0,90])
+							ballSwitchCutout(baseHeight+3, center=true, justcollar=true);
 					}
 				}
 			}
