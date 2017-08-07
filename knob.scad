@@ -127,7 +127,7 @@ module ring_of_cyliners(h=5, cr=3, rr=20) {
 	difference(){
 		cylinder(h=knobHeight, r=knobSize/2);
 		translate([0,0,-knobThick]) {
-			cylinder(h=knobHeight+knobThick+1, r=(knobSize/2)-knobThick + 0.1);
+			cylinder(h=knobHeight+knobThick+1, r=(knobSize/2)-knobThick);
 		}
 		// Need to make a ring of divits.  So a ring of cylinders cut out.
 		translate([0,0,baseHeight/2])
@@ -193,10 +193,11 @@ module curve_edge(r=10,h=5,deg=90,thick=1) {
 include <parts/ballSwitch.scad>
 
 // Ballswitch mount test
+/*
 union(){
 	difference() {
 		dr=12;
-		cylinder(h=baseHeight, r=dr);
+		cylinder(h=baseHeight, r=dr-knobGap);
 		for(step=[0, 180]) { // What is the right degree? How to math it?
 			rotate([0,0,step]) {
 				translate([dr-4.75,0,2+(baseHeight+3)/2]) {
@@ -205,7 +206,7 @@ union(){
 			}
 		}
 	}
-}
+}*/
 
 union() {
 	difference() {
