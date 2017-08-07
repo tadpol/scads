@@ -3,6 +3,7 @@ $fs=1;
 $fa=1;
 $fn=0;
 
+include <parts/ballSwitch.scad>
 include <parts/usbMicroBPlug.scad>;
 
 // [width, length, depth]
@@ -16,7 +17,6 @@ featherWing = [23, 51, 8]; // 8+?
 
 // SparkFun ESP32 Thing
 esp32Thing = [26, 59, 8];
-// TODO: descibe an opening for the USB
 esp32ThingMinSize = sqrt(pow(esp32Thing[0],2) + pow(esp32Thing[1],2));
 esp32Thing_usb_plugin = [8.5,0,2.6];
 
@@ -42,8 +42,8 @@ ringJ_thick = 3.6;
 knobThick=2;
 //knobSize=featherMinSize + (knobThick*2);
 //knobSize=featherTFTMinSize + (knobThick*2);
-knobSize=max(ring24_outter+1, esp32ThingMinSize) + (knobThick*2);
-//knobSize = 24 + (knobThick*2);
+//knobSize=max(ring24_outter+1, esp32ThingMinSize) + (knobThick*2);
+knobSize = 24 + (knobThick*2);
 echo(knobSize);
 knobHeight=20;
 knobGap=0.3;
@@ -56,7 +56,6 @@ baseHeight=10;
 baseBumps = 2;
 useBallSwitch = true;
 
-// TODO: Offsets to align USB plug to circuit boards. (put these up by the boards.)
 baseBottomThickness = 2;
 baseBottomHeight = 10;
 circuitGap = 0.4;
@@ -113,9 +112,14 @@ union() {
 	}
 }
 
+/*
+	@param h Cylinder height
+	@param rr Ring Radius.
+	@param cr Cylinder radius
+*/
 module ring_of_cyliners(h=5, cr=3, rr=20) {
 	pi = 3.1416;
-	// How many degrees each cylinder needs at a distance of cr from 0
+	// How many degrees each cylinder needs at a distance of rr from 0
 	degrees = (180 * (cr*2)) / (rr*pi);
 	for(step=[0 : degrees : 360]) {
 		rotate([0,0,step]) {
@@ -125,9 +129,31 @@ module ring_of_cyliners(h=5, cr=3, rr=20) {
 		}
 	}
 }
+/* For a ring_of_cyliners, rotate evenly to N of them.
+	@param rr Ring Radius.
+	@param cr Cylinder radius
+	@param count Number of steps around
+	@param alton Put every other child onto a ridge.
+*/
+module bump_location(cr=3, rr=20, count=3, alton=true) {
+	pi = 3.1416;
+	// How many degrees each cylinder needs at a distance of rr from 0
+	degrees = (180 * (cr*2)) / (rr*pi);
+	// How many cylinders will this make?
+	total = floor(360/degrees);
+	// How many to skip
+	skip = ceil(total / count);
+
+	for(step=[0 : skip*degrees : 359]) {
+		echo(step);
+		rotate([0,0,step]) {
+			children();
+		}
+	}
+}
 
 // knob
-union() {
+!union() {
 	difference(){
 		cylinder(h=knobHeight, r=knobSize/2);
 		translate([0,0,-knobThick]) {
@@ -146,11 +172,9 @@ union() {
 			}
 		}
 
-		%for(step=[0 : (360/baseBumps) : 360]) {
-			rotate([0,0,step]) {
-				translate([(knobSize/2)-(knobThick)-knobGap,0,baseHeight/2]) {
-					sphere(d=bumpSize);
-				}
+		%bump_location(cr=(bumpSize/2), rr=(knobSize/2)-(knobThick)) {
+			translate([(knobSize/2)-(knobThick)-knobGap,0,baseHeight/2]) {
+				sphere(d=bumpSize);
 			}
 		}
 	}
@@ -194,14 +218,16 @@ module curve_edge(r=10,h=5,deg=90,thick=1) {
 	}
 }
 
-include <parts/ballSwitch.scad>
 
 // Ballswitch mount test
-/*
+
 union(){
 	difference() {
 		dr=12;
 		cylinder(h=baseHeight, r=dr-knobGap);
+		/*
+		For half of a given size of a divit at given radius, how many degrees?
+		*/
 		for(step=[0, 180]) { // What is the right degree? How to math it?
 			rotate([0,0,step]) {
 				translate([dr-4.75,0,2+(baseHeight+3)/2]) {
@@ -209,10 +235,15 @@ union(){
 				}
 			}
 		}
+		/*bump_location() {
+			translate([dr-4.75,0,2+(baseHeight+3)/2]) {
+				rotate([90,0,90]) ballSwitchCutout(baseHeight+3, center=true, justcollar=true);
+			}
+		}*/
 	}
-}*/
+}
 
-!union() {
+union() {
 	difference() {
 		union() {
 			cylinder(h=baseHeight, r=(knobSize/2)-(knobThick)-knobGap);
