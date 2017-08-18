@@ -54,6 +54,7 @@ bumpSize=3;
 
 baseHeight=10;
 baseBumps = 2;
+bumpGap = 0.5;
 useBallSwitch = true;
 
 baseBottomThickness = 2;
@@ -116,13 +117,15 @@ union() {
 	@param h Cylinder height
 	@param rr Ring Radius.
 	@param cr Cylinder radius
+	@param cspace Space between each cylinder
 */
-module ring_of_cyliners(h=5, cr=3, rr=20) {
+module ring_of_cyliners(h=5, cr=3, cspace=0, rr=20) {
 	pi = 3.1416;
 	// How many degrees each cylinder needs at a distance of rr from 0
-	degrees = (180 * (cr*2)) / (rr*pi);
+	degrees = (180 * ((cr*2)+cspace)) / (rr*pi);
+	gapstep = (180 * (cspace/2)) / (rr*pi);
 	for(step=[0 : degrees : 360]) {
-		rotate([0,0,step]) {
+		rotate([0,0,step-gapstep]) {
 			translate([rr,0,-(h/2)]) {
 				cylinder(h=h, r=cr);
 			}
@@ -132,27 +135,27 @@ module ring_of_cyliners(h=5, cr=3, rr=20) {
 /* For a ring_of_cyliners, rotate evenly to N of them.
 	@param rr Ring Radius.
 	@param cr Cylinder radius
+	@param cspace Space between each cylinder
 	@param count Number of steps around
 	@param alton Put every other child onto a ridge.
 */
-module bump_location(cr=3, rr=20, count=2, alton=true) {
+module bump_location(cr=3, cspace=0, rr=20, count=2, alton=true) {
 	pi = 3.1416;
 	// How many degrees each cylinder needs at a distance of rr from 0
-	degrees = (180 * (cr*2)) / (rr*pi);
+	degrees = (180 * ((cr*2)+cspace)) / (rr*pi);
+	gapstep = (180 * (cspace/2)) / (rr*pi);
 	// How many cylinders will this make?
 	total = floor(360/degrees);
 	// How many to skip
 	skip = ceil(total / count);
 
 	for(step=[0 : (skip*degrees)*2 : 359]) {
-		echo(step);
-		rotate([0,0,step]) {
+		rotate([0,0,step-gapstep]) {
 			children();
 		}
 	}
 	for(step=[skip*degrees + (alton?degrees/2:0) : (skip*degrees)*2 : 359]) {
-		echo(step);
-		rotate([0,0,step]) {
+		rotate([0,0,step-gapstep]) {
 			children();
 		}
 	}
@@ -167,17 +170,17 @@ module bump_location(cr=3, rr=20, count=2, alton=true) {
 		}
 		// Need to make a ring of divits.  So a ring of cylinders cut out.
 		translate([0,0,baseHeight/2])
-			ring_of_cyliners(h=bumpSize, cr=(bumpSize/2), rr=(knobSize/2)-(knobThick), $fs=0.1);
+			ring_of_cyliners(h=bumpSize, cr=(bumpSize/2), cspace=bumpGap, rr=(knobSize/2)-(knobThick), $fs=0.1);
 
 		// Cutout to easily slide knob onto base.
-		bump_location(cr=(bumpSize/2), rr=(knobSize/2)-(knobThick)) {
+		bump_location(cr=(bumpSize/2), cspace=bumpGap, rr=(knobSize/2)-(knobThick)) {
 			translate([(knobSize/2)-(knobThick),0,-0.1]) {
 				cylinder(h=baseHeight/2-bumpSize/2+0.2, r=(bumpSize/2), $fs=0.1);
 			}
 		}
 
 		// Show spheres for visual alignments.
-		%bump_location(cr=(bumpSize/2), rr=(knobSize/2)-(knobThick)) {
+		%bump_location(cr=(bumpSize/2), cspace=bumpGap, rr=(knobSize/2)-(knobThick)) {
 			translate([(knobSize/2)-(knobThick)-knobGap,0,baseHeight/2]) {
 				sphere(d=bumpSize);
 			}
@@ -225,15 +228,17 @@ module curve_edge(r=10,h=5,deg=90,thick=1) {
 
 
 // Ballswitch mount test
-
 union(){
+			translate([0,0,-baseBottomHeight]) {
+				cylinder(h=baseBottomHeight,r=knobSize/2);
+			}
 	difference() {
 		dr=12;
 		cylinder(h=baseHeight, r=dr-knobGap);
 		/*
 		For half of a given size of a divit at given radius, how many degrees?
 		*/
-		bump_location(cr=(bumpSize/2), rr=(knobSize/2)-(knobThick)) {
+		bump_location(cr=(bumpSize/2), cspace=bumpGap, rr=(knobSize/2)-(knobThick)) {
 			translate([dr-4.75,0,2+(baseHeight+3)/2]) {
 				rotate([90,0,90]) ballSwitchCutout(baseHeight+3, center=true, justcollar=true);
 			}
