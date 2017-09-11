@@ -3,8 +3,8 @@ $fs=1;
 $fa=1;
 $fn=0;
 
-include <parts/ballSwitch.scad>
-include <parts/usbMicroBPlug.scad>;
+use <parts/ballSwitch.scad>
+use <parts/usbMicroBPlug.scad>
 
 // [width, length, depth]
 feather = [23,51,8];
@@ -39,7 +39,7 @@ ringJ_outter = 23;
 ringJ_inner = 0;
 ringJ_thick = 3.6;
 
-knobThick=2;
+knobThick=3;
 //knobSize=featherMinSize + (knobThick*2);
 //knobSize=featherTFTMinSize + (knobThick*2);
 //knobSize=max(ring24_outter+1, esp32ThingMinSize) + (knobThick*2);
@@ -50,11 +50,11 @@ knobGap=0.3;
 knobLipWidth=1;
 knobLipHeight=1;
 
-bumpSize=3;
+bumpSize=4;
 
 baseHeight=10;
 baseBumps = 2;
-bumpGap = 0.5;
+bumpGap = 1;
 useBallSwitch = true;
 
 baseBottomThickness = 2;
@@ -160,9 +160,16 @@ module bump_location(cr=3, cspace=0, rr=20, count=2, alton=true) {
 		}
 	}
 }
+/*
+	The above ring_of_cyliners makes uneven hills and valleys.
+	The bump_location puts the bumps 50% off phase.
+
+	TODO: The hills/valleys need to be even.
+	TODO: 25% phase offset?
+*/
 
 // knob
-!union() {
+union() {
 	difference(){
 		cylinder(h=knobHeight, r=knobSize/2);
 		translate([0,0,-knobThick]) {
@@ -228,7 +235,7 @@ module curve_edge(r=10,h=5,deg=90,thick=1) {
 
 
 // Ballswitch mount test
-union(){
+!union(){
 			translate([0,0,-baseBottomHeight]) {
 				cylinder(h=baseBottomHeight,r=knobSize/2);
 			}
