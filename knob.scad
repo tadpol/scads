@@ -17,7 +17,7 @@ featherMinSize = sqrt(pow(feather[0],2)+pow(feather[1],2));
 featherWing = [23, 51, 8]; // 8+?
 
 // SparkFun ESP32 Thing
-esp32Thing = [26, 59, 8];
+esp32Thing = [26.5, 59.5, 8.5];
 esp32ThingMinSize = sqrt(pow(esp32Thing[0],2) + pow(esp32Thing[1],2));
 esp32Thing_usb_plugin = [8.5,0,2.6];
 
@@ -43,8 +43,8 @@ ringJ_thick = 3.6;
 knobThick=3;
 //knobSize=featherMinSize + (knobThick*2);
 //knobSize=featherTFTMinSize + (knobThick*2);
-//knobSize=max(ring24_outter+1, esp32ThingMinSize) + (knobThick*2);
-knobSize = 24 + (knobThick*2);
+knobSize=max(ring24_outter+1, esp32ThingMinSize) + (knobThick*2);
+//knobSize = 24 + (knobThick*2);
 echo(knobSize);
 knobHeight=20;
 knobGap=0.3;
@@ -54,7 +54,8 @@ knobLipHeight=1;
 bumpSize=4;
 
 baseHeight=10;
-baseBumps = [0, 5.25];
+//baseBumps = [0, 5.25];
+baseBumps = [0, 13.25]; // For when esp32thing size
 useBallSwitch = true;
 
 baseBottomThickness = 2;
@@ -115,13 +116,13 @@ union() {
 
 
 // knob
-!union() {
+union() {
 	difference(){
 		cylinder(h=knobHeight, r=knobSize/2);
 		translate([0,0,-knobThick]) {
 			cylinder(h=knobHeight+knobThick+1, r=(knobSize/2)-knobThick);
 		}
-		b_radius = (knobSize/2)-(knobThick/2);
+		b_radius = (knobSize/2)-(knobThick/2)-0.5;
 		// Need to make a ring of divits.  So a ring of cylinders cut out.
 		translate([0,0,baseHeight/2-bumpSize/2 +1])
 			bumpy_cylinder(r=b_radius, cr=bumpSize, h=bumpSize);
@@ -142,13 +143,16 @@ union() {
 			}
 		}
 	}
+	// FIXME: this is't adjusting with thickness changes.
 	// Upper lip
+	/*
 	difference(){
 		translate([0,0,knobHeight])
 			cylinder(h=knobLipHeight, r=knobSize/2);
 		translate([0,0,knobHeight-0.1])
 			cylinder(h=knobLipHeight+0.2, r2=knobSize/2-knobLipWidth-knobThick, r1=knobSize/2-knobLipWidth);
 	}
+	*/
 }
 
 // base
@@ -195,7 +199,7 @@ union(){
 		For half of a given size of a divit at given radius, how many degrees?
 		*/
 		for(idx=baseBumps) {
-			bumpy_cylinder_rotate_to(r=(knobSize/2)-(knobThick/2), cr=bumpSize, idx=idx) {
+			bumpy_cylinder_rotate_to(r=(knobSize/2)-(knobThick/2-0.5), cr=bumpSize, idx=idx) {
 				translate([dr-4.75,0,2+(baseHeight+3)/2]) {
 					rotate([90,0,90]) ballSwitchCutout(baseHeight+3, center=true, justcollar=true);
 				}
@@ -204,7 +208,7 @@ union(){
 	}
 }
 
-union() {
+!union() {
 	difference() {
 		union() {
 			cylinder(h=baseHeight, r=(knobSize/2)-(knobThick)-knobGap);
@@ -213,7 +217,7 @@ union() {
 			if (useBallSwitch) {
 			} else {
 				for(idx=baseBumps) {
-					bumpy_cylinder_rotate_to(r=(knobSize/2)-(knobThick/2), cr=bumpSize, idx=idx) {
+					bumpy_cylinder_rotate_to(r=(knobSize/2)-(knobThick/2)-0.5, cr=bumpSize, idx=idx) {
 						translate([(knobSize/2)-(knobThick)-knobGap,0,baseHeight/2]) {
 							sphere(d=bumpSize, $fs=0.1);
 						}
@@ -241,7 +245,7 @@ union() {
 
 		if (useBallSwitch) {
 			for(idx=baseBumps) {
-				bumpy_cylinder_rotate_to(r=(knobSize/2)-(knobThick/2), cr=bumpSize, idx=idx) {
+				bumpy_cylinder_rotate_to(r=(knobSize/2)-(knobThick/2)-0.5, cr=bumpSize, idx=idx) {
 					translate([(knobSize/2)-(knobThick)-knobGap-4.75,0,2+(baseHeight+3)/2]) {
 						rotate([90,0,90])
 							ballSwitchCutout(baseHeight+3, center=true, justcollar=true);
@@ -251,7 +255,7 @@ union() {
 		} else {
 			// Cutout for spring tabs.
 			for(idx=baseBumps) {
-				bumpy_cylinder_rotate_to(r=(knobSize/2)-(knobThick/2), cr=bumpSize, idx=idx) {
+				bumpy_cylinder_rotate_to(r=(knobSize/2)-(knobThick/2)-0.5, cr=bumpSize, idx=idx) {
 					rotate([0,0,5]) {
 						translate([(knobSize/2)-knobThick-knobGap-2,0,0]) {
 							cube([2,1,baseHeight+1]);
