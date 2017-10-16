@@ -273,7 +273,7 @@ union(){
 			resize([0,0,baseBottomHeight+baseHeight])
 				cube(esp32Thing+circuitGapV);
 
-			usbMicroBPlug(plugin=esp32Thing_usb_plugin, plugcutout=true);
+			usbMicroBPlug(plugin=esp32Thing_usb_plugin, gap=0.5, plugcutout=true);
 		}
 	}
 }
