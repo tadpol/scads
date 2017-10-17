@@ -46,7 +46,7 @@ knobThick=3;
 knobSize=max(ring24_outter+1, esp32ThingMinSize) + (knobThick*2);
 //knobSize = 24 + (knobThick*2);
 echo(knobSize);
-knobHeight=20;
+knobHeight=30;
 knobGap=0.3;
 knobLipWidth=1;
 knobLipHeight=1;
