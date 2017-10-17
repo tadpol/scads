@@ -146,6 +146,7 @@ union() {
 	}
 	// FIXME: this is't adjusting with thickness changes.
 	// Upper lip
+	// Replace this with something to hold a transparent disc
 	/*
 	difference(){
 		translate([0,0,knobHeight])
