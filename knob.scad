@@ -103,6 +103,17 @@ translate([0,0,ring_raised]) {
 		rotate([0,0,45]) {
 			ring_support_spoke();
 			rotate([0,0,90]) ring_support_spoke();
+/*
+			// Support for driver circuit.  May not bother making this and instead just
+			// use stiffness of wires.
+			translate([0,0,-5.5]) {
+				cube([5,5,5.5]);
+				translate([2.5,2.5,-2])
+					cylinder(h=3,d=3);
+				translate([0,-20,0])
+				cube([5,5,5.5]);
+			}
+*/
 		}
 
 
@@ -210,7 +221,7 @@ union(){
 	}
 }
 
-!union() {
+union() {
 	difference() {
 		union() {
 			cylinder(h=baseHeight, r=(knobSize/2)-(knobThick)-knobGap);
