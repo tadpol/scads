@@ -7,26 +7,34 @@ use <parts/ballSwitch.scad>
 use <parts/usbMicroBPlug.scad>
 use <parts/bumpyCylinder.scad>
 
+// TODO: Select board: [feather, esp32Thing]
+
 // [width, length, depth]
 feather = [23,51,8];
 //featherCircuitDepth = 2;
 featherMinSize = sqrt(pow(feather[0],2)+pow(feather[1],2));
+feather_usb_plugin = [11,0,2.6];
 
 // Add wing that will hold level shifter, cap, and resistors.
 // Not too worried, looks like we'll have plenty of open space.
 featherWing = [23, 51, 8]; // 8+?
-
-// SparkFun ESP32 Thing
-esp32Thing = [26.5, 59.5, 8.5];
-esp32ThingMinSize = sqrt(pow(esp32Thing[0],2) + pow(esp32Thing[1],2));
-esp32Thing_usb_plugin = [8.5,0,2.6];
-
 /*
 featherTFTWidth = 65.0;
 featherTFTLength = 53;
 featherTFTHight = 9.5;
 featherTFTMinSize = sqrt(pow(featherTFTWidth,2)+pow(featherTFTLength,2));
 */
+
+// SparkFun ESP32 Thing
+esp32Thing = [26.5, 59.5, 8.5];
+esp32ThingMinSize = sqrt(pow(esp32Thing[0],2) + pow(esp32Thing[1],2));
+esp32Thing_usb_plugin = [8.5,0,2.6];
+
+
+board = feather;
+boardMinSize = featherMinSize;
+board_usb_plugin = feather_usb_plugin;
+
 ring24_outter = 65.6;
 ring24_inner = 52.3;
 ring24_thick = 3.6;
@@ -41,9 +49,7 @@ ringJ_inner = 0;
 ringJ_thick = 3.6;
 
 knobThick=3;
-//knobSize=featherMinSize + (knobThick*2);
-//knobSize=featherTFTMinSize + (knobThick*2);
-knobSize=max(ring24_outter+1, esp32ThingMinSize) + (knobThick*2);
+knobSize=max(ring24_outter+1, boardMinSize) + (knobThick*2);
 //knobSize = 24 + (knobThick*2);
 echo(knobSize);
 knobHeight=30;
@@ -221,7 +227,7 @@ union(){
 	}
 }
 
-union() {
+!union() {
 	difference() {
 		union() {
 			cylinder(h=baseHeight, r=(knobSize/2)-(knobThick)-knobGap);
@@ -282,11 +288,11 @@ union() {
 		}
 
 		// Cutout for circuits.
-		translate([-(esp32Thing[0]+circuitGap)/2, -(esp32Thing[1]+circuitGap)/2, -baseBottomHeight+baseBottomThickness]) {
+		translate([-(board[0]+circuitGap)/2, -(board[1]+circuitGap)/2, -baseBottomHeight+baseBottomThickness]) {
 			resize([0,0,baseBottomHeight+baseHeight])
-				cube(esp32Thing+circuitGapV);
+				cube(board+circuitGapV);
 
-			usbMicroBPlug(plugin=esp32Thing_usb_plugin, gap=0.5, plugcutout=true);
+			usbMicroBPlug(plugin=board_usb_plugin, gap=0.5, plugcutout=true);
 		}
 
 		// Cutout for pushing the mainboard out.
