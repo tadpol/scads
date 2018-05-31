@@ -3,19 +3,9 @@
 .LSOverride
 Icon
 *.sw[a-z]
-cookies
 .jiramulerc
-.yardoc/
 tags
-mr.exe
-
-xcuserdata
-Pods/
-pkg/
-report/
-coverage/
-doc/
-
+stl/
 
 _testProject/
 test.*

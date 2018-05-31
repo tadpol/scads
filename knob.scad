@@ -14,6 +14,10 @@ feather = [23,51,8];
 //featherCircuitDepth = 2;
 featherMinSize = sqrt(pow(feather[0],2)+pow(feather[1],2));
 feather_usb_plugin = [11,0,2.6];
+feather_mounts = [[2.54,2.54],[2.54,48.26],[20.32,2,54],[20.32,48.26]]; // Centers of screw holes.
+feather_hole_size = 2.54;
+feather_battery_jst=10.795; // to center from left top
+jst = [7,7,7];
 
 // Add wing that will hold level shifter, cap, and resistors.
 // Not too worried, looks like we'll have plenty of open space.
@@ -30,9 +34,13 @@ esp32Thing = [26.5, 59.5, 8.5];
 esp32ThingMinSize = sqrt(pow(esp32Thing[0],2) + pow(esp32Thing[1],2));
 esp32Thing_usb_plugin = [8.5,0,2.6];
 
+//battery = [35,62,5]; // 1200mAh
+battery = [37,55,6]; // 1000mAh
+batteryMinSize = sqrt(pow(battery[0],2) + pow(battery[1],2));
 
 board = feather;
 boardMinSize = featherMinSize;
+boardHeight = feather[2];
 board_usb_plugin = feather_usb_plugin;
 
 ring24_outter = 65.6;
@@ -49,9 +57,8 @@ ringJ_inner = 0;
 ringJ_thick = 3.6;
 
 knobThick=3;
-knobSize=max(ring24_outter+1, boardMinSize) + (knobThick*2);
-//knobSize = 24 + (knobThick*2);
-echo(knobSize);
+knobSize=max(ring24_outter+1, boardMinSize, batteryMinSize) + (knobThick*2);
+//echo(knobSize);
 knobHeight=30;
 knobGap=0.3;
 knobLipWidth=1;
@@ -65,7 +72,7 @@ baseBumps = [0, 13.25]; // For when esp32thing size
 useBallSwitch = true;
 
 baseBottomThickness = 2;
-baseBottomHeight = 10;
+baseBottomHeight = boardHeight + battery[2] + 2; // 2 is padding
 circuitGap = 0.4;
 circuitGapV = [circuitGap,circuitGap,circuitGap];
 
@@ -287,10 +294,16 @@ union(){
 			}
 		}
 
-		// Cutout for circuits.
+		// TODO: ?Make this a bigger clearer opening.  Later add mounting holes &| inserts to hold things.
+		// *sigh* the best place for the battery is below the circuit, But that means the USB is now floating up in hte air.
+		// Cutout for circuits. ?and battery
 		translate([-(board[0]+circuitGap)/2, -(board[1]+circuitGap)/2, -baseBottomHeight+baseBottomThickness]) {
 			resize([0,0,baseBottomHeight+baseHeight])
 				cube(board+circuitGapV);
+			
+			translate([-(jst[0]/2), feather_battery_jst-(jst[1]/2), 0])
+				resize([0,0,baseBottomHeight+baseHeight])
+					cube(jst);
 
 			usbMicroBPlug(plugin=board_usb_plugin, gap=0.5, plugcutout=true);
 		}
