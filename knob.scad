@@ -59,7 +59,7 @@ ringJ_thick = 3.6;
 knobThick=3;
 knobSize=max(ring24_outter+1, boardMinSize, batteryMinSize) + (knobThick*2);
 //echo(knobSize);
-knobHeight=30;
+knobHeight=35;
 knobGap=0.3;
 knobLipWidth=1;
 knobLipHeight=1;
@@ -141,7 +141,7 @@ translate([0,0,ring_raised]) {
 
 
 // knob
-union() {
+!union() {
 	difference(){
 		cylinder(h=knobHeight, r=knobSize/2);
 		translate([0,0,-knobThick]) {
@@ -167,18 +167,10 @@ union() {
 				}
 			}
 		}
+		translate([0,0,knobHeight-2]) {
+			cylinder(h=1, r=knobSize/2-knobThick+1);
+		}
 	}
-	// FIXME: this is't adjusting with thickness changes.
-	// Upper lip
-	// Replace this with something to hold a transparent disc
-	/*
-	difference(){
-		translate([0,0,knobHeight])
-			cylinder(h=knobLipHeight, r=knobSize/2);
-		translate([0,0,knobHeight-0.1])
-			cylinder(h=knobLipHeight+0.2, r2=knobSize/2-knobLipWidth-knobThick, r1=knobSize/2-knobLipWidth);
-	}
-	*/
 }
 
 // base
