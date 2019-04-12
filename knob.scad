@@ -72,7 +72,7 @@ baseBumps = [0, 13.25]; // For when esp32thing size
 useBallSwitch = true;
 
 baseBottomThickness = 2;
-baseBottomHeight = boardHeight + battery[2] + 2; // 2 is padding
+baseBottomHeight = boardHeight + 5; // 2 is padding
 circuitGap = 0.4;
 circuitGapV = [circuitGap,circuitGap,circuitGap];
 
@@ -226,7 +226,7 @@ union(){
 	}
 }
 
-!union() {
+union() {
 	difference() {
 		union() {
 			cylinder(h=baseHeight, r=(knobSize/2)-(knobThick)-knobGap);
