@@ -17,21 +17,28 @@ batteries_by_name = [
   ["CR1130", 3, 11.5, false],
 ];
 
+/// Get the dimensions of a battery by name
+// @param name The common name of the battery.
+// @param hole When true, this is a hole to put the battery into.
 function battery_size_by_name(name="AA", hole=false) =
   let(found_idx=search([name], batteries_by_name),
       found=batteries_by_name[found_idx[0]],
       dia=found[2] + (hole?1:0),
-      height=found[1] + (hole?3:0)
+      height=found[1] + (hole?7:0) // See notes below
       )
       [height,dia];
 
+/// A battery by name
+// @param name The common name of the battery.
+// @param hole When true, this is a hole to put the battery into.
 module battery_by_name(name="AA", hole=false) {
   found_idx=search([name], batteries_by_name);
   found = batteries_by_name[found_idx[0]];
   if (hole) {
-    // if button type, assume that it will get held by a wire spring, so 1 for button, 2 for spring.
-    // if not button, assume sheet metal spring, so 1.
-    cylinder(h=found[1] + (found[3]?3:1), d=found[2] + 1);
+    // if button-top type, assume that it will get held by a wire spring, so 
+    //   3mm for compressed spring; 2mm for button; 2mm for spacing
+    // if not button-top, assume sheet metal spring, so 1.
+    cylinder(h=found[1] + (found[3]?7:1), d=found[2] + 1);
 
   }else {
     cylinder(h=found[1], d=found[2]);
