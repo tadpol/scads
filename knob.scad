@@ -33,6 +33,7 @@ knobThick=2;
 //knobSize=featherMinSize + (knobThick*2);
 //knobSize=featherTFTMinSize + (knobThick*2);
 knobSize=max(ring24_outter, featherMinSize) + (knobThick*2);
+echo(knobSize);
 knobHeight=20;
 knobGap=0.3;
 knobLipWidth=1;
@@ -75,7 +76,7 @@ module ring_support_spoke(width=10, depth=2) {
 			ring(ringJ_outter, ringJ_inner, ringJ_thick);
 	}
 }
-!union() {
+union() {
 	ring_support_spoke();
 	rotate([0,0,90]) ring_support_spoke();
 
@@ -140,21 +141,29 @@ module slice(r = 10, deg = 30) {
 		else union() for(a = [0, 180 - degn]) rotate(a) translate([-r, 0, 0]) square(r * 2);
 	}
 }
-
 module curve_edge(r=10,h=5,deg=90,thick=1) {
-	difference() {
-		linear_extrude(height=h, center=false, convexity=10, twist=0, slices=20) {
-			slice(r,deg);
-		}
-		translate([0,0,-0.5])
-			rotate([0,0,0.5])
-			linear_extrude(height=h+1, center=false, convexity=10, twist=0, slices=20) {
-				slice(r-thick,deg+1);
+	if ( version_num() < 20170208 ) {
+		// curve_edge() is currently very cpu intensive.
+		difference() {
+			linear_extrude(height=h, center=false, convexity=10, twist=0, slices=20) {
+				slice(r,deg);
 			}
+			translate([0,0,-0.5])
+				rotate([0,0,0.5])
+				linear_extrude(height=h+1, center=false, convexity=10, twist=0, slices=20) {
+					slice(r-thick,deg+1);
+				}
+		}
+	} else {
+		// This is much faster.
+		rotate_extrude(angle=-deg, convexity = 10) {
+			translate([r-thick,0,0])
+				square([thick, h]);
+		}
 	}
 }
 
-union() {
+!union() {
 	difference() {
 		union() {
 			cylinder(h=baseHeight, r=(knobSize/2)-(knobThick)-knobGap);
@@ -167,7 +176,6 @@ union() {
 			}
 		}
 
-		// curve_edge() is currently very cpu intensive.
 		for(step=[10 : (360/baseBumps) : 370]) {
 			rotate([0,0,step]) {
 				translate([(knobSize/2)-knobThick-knobGap-2,0,0]) {
