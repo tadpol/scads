@@ -84,12 +84,11 @@ module case_top() {
       roundedBox(lipped, 4, true);
       roundedBox(lipped - wall_set + [0,0,4], 4, true);
 
-
-	translate([-sab[0]/2, -sab[1]/2, 2]) {
-		rotate([0, 0, 0]) {
-			switched_AAA_box();
-		}
-	}
+      translate([-sab[0]/2, -sab[1]/2, 2]) {
+        rotate([0, 0, 0]) {
+          switched_AAA_box();
+        }
+      }
     }
   }
 }
@@ -120,6 +119,7 @@ module spacer() {
       // small lifts for between the sheild and light sensor?
     }
 
+    // “Slopes” for rounded bottom.
     c = sqrt(pow(gap,2) + pow(gap,2) - 2*gap*gap*cos(90));
     translate([-0.5, inside[1]/2 + wall_thickness, h - c/2]) {
       rotate([45, 0, 0]) {
@@ -142,6 +142,16 @@ module spacer() {
       }
     }
 
+    // Wire guides for antenna
+    translate([0, 6.5, -0.1]) {
+      cube([inside[0], 1, 1.5]);
+    }
+    translate([0, inside[1]/2 - gap, -0.1]) {
+      cube([inside[0], 1, 1.5]);
+    }
+    translate([gap/2, 11.5, -0.1]) {
+      cube([1, wall_thickness*2+1, 1.5]);
+    }
   }
 }
 
