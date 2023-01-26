@@ -112,6 +112,11 @@ difference() {
 		cube(size=[5,sztWidth,sztThick]);
 	}
 
+	// cutout for probe holder
+	*translate([baseSize/2, 2.5, (cupDiameter/2)+2])
+	rotate([0,-25,0])
+		translate([0,0,-(cupDiameter/2)-2.4])
+			cube(size=[5.1,10,5.1], center=true);
 }
 
 ////////////////////////////
@@ -189,4 +194,18 @@ union() {
 			cube(size=[2, battMountLength, featherDepth]);
 	}
 }
-//	vim: set sw=2 ts=2 :
+
+////////////////////////////
+// Holder for temperature sensors
+*translate([baseSize+5,baseSize+5,0])
+difference(){
+	union() {
+		cube(size=[5,40,5]);
+		translate([0,40,0])
+			cube(size=[15,5,5]);
+	}
+
+	translate([10,40,0])
+		zip_tie_cutout();
+}
+//	vim: set ai sw=2 ts=2 :
