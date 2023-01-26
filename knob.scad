@@ -18,21 +18,21 @@ echo(featherTFTMinSize);
 
 ring24_outter = 65.6;
 ring24_inner = 52.3;
-ring24_thick = 6.7;
+ring24_thick = 3.6;
 ring16_outter = 44.5;
 ring16_inner = 31.75;
-ring16_thick = 3.25;
+ring16_thick = 3.6;
 ring12_outter = 36.8;
 ring12_inner = 23.3;
-ring12_thick = 3.25;
+ring12_thick = 3.6;
 ringJ_outter = 23;
 ringJ_inner = 0;
-ringJ_thick = 2;
+ringJ_thick = 3.6;
 
 knobThick=2;
 //knobSize=featherMinSize + (knobThick*2);
 //knobSize=featherTFTMinSize + (knobThick*2);
-knobSize=ring24_outter + (knobThick*2);
+knobSize=max(ring24_outter, featherMinSize) + (knobThick*2);
 knobHeight=20;
 knobGap=0.3;
 knobLipWidth=1;
@@ -51,18 +51,47 @@ module ring(o,i,h) {
 			cylinder(h=h+0.2, r=i);
 	}
 }
-union() {
-	ring(ring24_outter, ring24_inner, ring24_thick);
-	translate([0,0,ring24_thick])
+
+module ring_support_spoke(width=10, depth=2) {
+	difference() {
+		translate([-ring24_outter,-(width/2),0])
+			cube([ring24_outter*2, width, depth]);
+		translate([0,0,-0.1])
+			ring(ring24_outter+3, ring24_outter, ring24_thick);
+	}
+	// edges to hold outer most ring
+	difference() {
+		translate([-(ring24_outter-1),-(width/2),depth])
+			cube([(ring24_outter-1)*2, width, depth]);
+		translate([0,0,depth-0.1]) {
+			ring(ring24_outter, ring24_inner, ring24_thick);
+		}
+	// Raised edge to hold 16 ring and support 12 ring
+		translate([0,0,depth-0.1])
+			ring(ring16_outter, ring16_inner, ring16_thick);
+
+		// Sink into it for the Jewel in center.
+		translate([0,0,depth-0.1])
+			ring(ringJ_outter, ringJ_inner, ringJ_thick);
+	}
+}
+!union() {
+	ring_support_spoke();
+	rotate([0,0,90]) ring_support_spoke();
+
+
+	%translate([0,0,2]) {
+		ring(ring24_outter, ring24_inner, ring24_thick);
 		ring(ring16_outter, ring16_inner, ring16_thick);
-	translate([0,0,ring16_thick+ring24_thick+1])
-		ring(ring12_outter, ring12_inner, ring12_thick);
-	translate([0,0,ring16_thick+ring24_thick+1+ring12_thick])
+		//translate([0,0,ring16_thick+1]) ring(ring12_outter, ring12_inner, ring12_thick);
 		ring(ringJ_outter, ringJ_inner, ringJ_thick);
+	}
 }
 
+// TODO: Need a support/mount to hold the feather.
+
 // knob
-!union() {
+union() {
 	difference(){
 		cylinder(h=knobHeight, r=knobSize/2);
 		translate([0,0,-knobThick]) {
