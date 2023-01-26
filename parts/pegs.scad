@@ -50,6 +50,39 @@ function featherHuzzahESP8266_sizes(h=5) = [
   [h, 1.145, 1.91],
 ];
 
+function featherWingDoubler_locations() = [
+  [2.57, 2.57, 0],
+  [23-2.57, 2.57, 0],
+  [23-2.57, 51-2.57, 0],
+  [2.57, 51-2.57, 0],
+
+  [23+2.57, 2.57, 0],
+  [23+23-2.57, 2.57, 0],
+  [23+23-2.57, 51-2.57, 0],
+  [23+2.57, 51-2.57, 0],
+];
+
+function featherWingDoubler_sizes(h=5) = [for(i=[0:7]) [h, 1.22, 2.57] ];
+
+function featherWingTripler_locations() = [
+  [2.57, 2.57, 0],
+  [23-2.57, 2.57, 0],
+  [23-2.57, 51-2.57, 0],
+  [2.57, 51-2.57, 0],
+
+  [23+2.57, 2.57, 0],
+  [23+23-2.57, 2.57, 0],
+  [23+23-2.57, 51-2.57, 0],
+  [23+2.57, 51-2.57, 0],
+
+  [46+2.57, 2.57, 0],
+  [46+23-2.57, 2.57, 0],
+  [46+23-2.57, 51-2.57, 0],
+  [46+2.57, 51-2.57, 0],
+];
+
+function featherWingTripler_sizes(h=5) = [for(i=[0:11]) [h, 1.22, 2.57] ];
+
 // ====================== SparkFun Thing ======================
 // Things have a *lot* of overhang on the X-axis.
 function SparkFunThing_locations(edgeToPegCenter=2.79) = [
