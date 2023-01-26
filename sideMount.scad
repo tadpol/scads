@@ -47,8 +47,7 @@ sztWidth = 3; // X
 sztThick = 1.5; // Y
 sztXinset = 2;
 sztYinset = 1;
-sztHeadWidth = 5;
-sztHeadThick = 3.5;
+sztSlotOffset = 1.5;
 
 baseSize = featherLength;
 
@@ -131,8 +130,8 @@ difference() {
 	// cutout for mounting zip-ties
 	zip_tie_cutout();
 	// side-extention cutouts
-	zip_tie_extra_cutout(depth=wallThickness-sztHeadThick) {
-		cube(size=[5,sztWidth,sztHeadThick+1]);
+	zip_tie_extra_cutout(depth=wallThickness-sztSlotOffset) {
+		cube(size=[5,sztWidth,sztSlotOffset+1]);
 	}
 
 	// Cut out a place for the coil
