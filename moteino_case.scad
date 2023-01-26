@@ -5,6 +5,13 @@ echo(version=version());
 $fa=1;
 $fs=1;
 ////////////////////////////
+
+side_wires = false;
+ftdi_header = false;
+power_ftdi = true;
+height = 0; // Extra height for shields.
+
+////////////////////////////
 use <parts/moteino.scad>;
 
 tolerance=0.2;
@@ -15,14 +22,16 @@ wall_thickness = 1.5;
 mote_box=moteino_dims() + [
 	wall_thickness*2,
 	wall_thickness*2,
-	wall_thickness*2
+	wall_thickness*2 + height
 ];
 mote_cut=moteino_dims() + [
 	tolerance,
 	tolerance,
-	tolerance + wall_thickness,
+	tolerance + wall_thickness + height,
 ];
 wire_diameter=1.3; // Battery wires
+ftdi_width=15.5;
+power_ftdi_width=ftdi_width/2;
 
 %translate([wall_thickness+tolerance,10+wall_thickness,wall_thickness+tolerance])
 	moteino();
@@ -30,9 +39,22 @@ wire_diameter=1.3; // Battery wires
 !difference() {
 	cube(mote_box);
 	translate([wall_thickness,wall_thickness,wall_thickness]) cube(mote_cut);
-	// Cut slot for battery wires coming in.
-	translate([mote_box[0]-0.5 - wall_thickness, 3, mote_box[2]-(wire_diameter+wall_thickness)])
-		cube([wall_thickness+1, wire_diameter*2, wire_diameter+wall_thickness+0.1]);
+
+	if (side_wires) {
+		// Cut slot for battery wires coming in.
+		translate([mote_box[0]-0.5 - wall_thickness, 3, mote_box[2]-(wire_diameter+wall_thickness)])
+			cube([wall_thickness+1, wire_diameter*2, wire_diameter+wall_thickness+0.1]);
+	}
+	if (ftdi_header) {
+		cr=(mote_box[0]/2) - (ftdi_width/2) - tolerance/2;
+		translate([cr,-(tolerance/2),wall_thickness])
+			cube([ftdi_width+tolerance, wall_thickness+tolerance, mote_box[2]]);
+	}
+	if (power_ftdi) {
+		cr=(mote_box[0]/2) - tolerance/2;
+		translate([cr,-(tolerance/2),wall_thickness])
+			cube([power_ftdi_width+tolerance, wall_thickness+tolerance, mote_box[2]]);
+	}
 }
 
 // Lid
@@ -52,3 +74,4 @@ union() {
 	translate([wall_thickness,wall_thickness,-wall_thickness]) cube(mote_lid_lip);
 }
 
+// vim: set ai sw=2 ts=2 :
