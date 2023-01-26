@@ -236,8 +236,8 @@ union(){
 				rotate([0,0,45+i]) {
 					translate([(knobSize/2)-(knobThick)-knobGap-4,-6.5,0])
 						difference() {
-							cube([2,13,ring_raised+ring24_thick-1]);
-							translate([-0.5,0.75,ring_raised])
+							cube([2,14,ring_raised+ring24_thick-1]);
+							translate([-0.5,1.5,ring_raised])
 								cube([3,11,ring24_thick]);
 						}
 				}
