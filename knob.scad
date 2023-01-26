@@ -3,16 +3,18 @@ $fs=1;
 $fa=1;
 $fn=0;
 
-featherWidth = 23;
-featherLength = 51;
-featherDepth = 8; // includes components; LIPO jack is tallest
-featherCircuitDepth = 2;
-featherMinSize = sqrt(pow(featherWidth,2)+pow(featherLength,2));
+feather = [23,51,8];
+//featherCircuitDepth = 2;
+featherMinSize = sqrt(pow(feather[0],2)+pow(feather[1],2));
 
 // TODO: Add wing that will hold level shifter, cap, and resistors.
 // XXX Include header heights!
 // [width, length, depth]
 featherWing = [23, 51, 8]; // 8+?
+
+// SparkFun ESP32 Thing
+esp32Thing = [26, 59, 8];
+esp32ThingMinSize = sqrt(pow(esp32Thing[0],2) + pow(esp32Thing[1],2));
 
 /*
 featherTFTWidth = 65.0;
@@ -36,7 +38,7 @@ ringJ_thick = 3.6;
 knobThick=2;
 //knobSize=featherMinSize + (knobThick*2);
 //knobSize=featherTFTMinSize + (knobThick*2);
-knobSize=max(ring24_outter+1, featherMinSize) + (knobThick*2);
+knobSize=max(ring24_outter+1, esp32ThingMinSize) + (knobThick*2);
 echo(knobSize);
 knobHeight=20;
 knobGap=0.3;
@@ -51,6 +53,8 @@ baseBumps = 2;
 usbMicroBPlug = [12.33,29.1,8.04];
 baseBottomThickness = 2;
 baseBottomHeight = 10;
+circuitGap = 0.4;
+circuitGapV = [circuitGap,circuitGap,circuitGap];
 
 //rings
 module ring(o,i,h) {
@@ -199,12 +203,16 @@ module curve_edge(r=10,h=5,deg=90,thick=1) {
 			}
 		}
 
-		translate([-(featherWidth+0.4)/2, -(featherLength+0.4)/2, -baseBottomHeight+baseBottomThickness])
-			cube([featherWidth+0.4, featherLength+0.4, baseHeight+baseBottomHeight]);
+		// Cutout for circuits.
+		translate([-(esp32Thing[0]+circuitGap)/2, -(esp32Thing[1]+circuitGap)/2, -baseBottomHeight+baseBottomThickness])
+			resize([0,0,baseBottomHeight+baseHeight])
+				cube(esp32Thing+circuitGapV);
+
+		//translate([-(feather[0]+0.4)/2, -(feather[1]+0.4)/2, -baseBottomHeight+baseBottomThickness])
+			//cube([feather[0]+0.4, feather[1]+0.4, baseHeight+baseBottomHeight]);
 		// TODO: cut out for USB port.
-		translate([-(10)/2, (featherLength+0.4)/2-1, -baseBottomHeight+baseBottomThickness])
-			scale([1.1,1.1,1.1])
-				cube(usbMicroBPlug);
+		translate([-(10)/2, (feather[1]+0.4)/2-1, -baseBottomHeight+baseBottomThickness])
+				cube(usbMicroBPlug+circuitGapV);
 	}
 }
 
