@@ -3,9 +3,9 @@ $fs=1;
 $fa=1;
 $fn=0;
 
-use <parts/ballSwitch.scad>
-use <parts/usbMicroBPlug.scad>
-use <parts/bumpyCylinder.scad>
+use <../parts/ballSwitch.scad>
+use <../parts/usbMicroBPlug.scad>
+use <../parts/bumpyCylinder.scad>
 
 // TODO: Select board: [feather, esp32Thing]
 

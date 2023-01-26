@@ -5,7 +5,7 @@ echo(version=version());
 $fa=1;
 $fs=1;
 ////////////////////////////
-include<sharp-ir-distance.scad>;
+include<../parts/sharp-ir-distance.scad>;
 
 tolerance=0.1;
 

@@ -9,13 +9,13 @@ $fs=1;
 side_wires = false;
 ftdi_header = false;
 power_ftdi = true;
-height = 0; // Extra height for shields.
+height = 20; // Extra height for shields.
 
 ////////////////////////////
 use <parts/moteino.scad>;
 
 tolerance=0.2;
-wall_thickness = 1.5;
+wall_thickness = 0.4 * 3; // 3x extusion width
 
 
 // Main Box
@@ -36,7 +36,7 @@ power_ftdi_width=ftdi_width/2;
 %translate([wall_thickness+tolerance,10+wall_thickness,wall_thickness+tolerance])
 	moteino();
 
-!difference() {
+difference() {
 	cube(mote_box);
 	translate([wall_thickness,wall_thickness,wall_thickness]) cube(mote_cut);
 
@@ -53,7 +53,7 @@ power_ftdi_width=ftdi_width/2;
 	if (power_ftdi) {
 		cr=(mote_box[0]/2) - tolerance/2;
 		translate([cr,-(tolerance/2),wall_thickness])
-			cube([power_ftdi_width+tolerance, wall_thickness+tolerance, mote_box[2]]);
+			cube([power_ftdi_width+tolerance, wall_thickness+tolerance, mote_box[2]-height - 8]);
 	}
 }
 
@@ -69,9 +69,13 @@ mote_lid_lip = [
 	wall_thickness
 ];
 translate([0,0,mote_box[2] + 20])
-union() {
-	cube(mote_lid);
-	translate([wall_thickness,wall_thickness,-wall_thickness]) cube(mote_lid_lip);
+!difference() {
+	union() {
+		cube(mote_lid);
+		translate([wall_thickness,wall_thickness,-wall_thickness]) cube(mote_lid_lip);
+	}
+	translate([10,mote_lid[1]-7,-3]) cylinder(d=5,h=5);
+	translate([10,mote_lid[1]-18,-3]) cylinder(d=5,h=5);
 }
 
 // vim: set ai sw=2 ts=2 :
