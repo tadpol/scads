@@ -2,9 +2,11 @@ echo(version=version());
 
 // Values are in millimeters
 
+$fa=1;
+$fs=1;
 ////////////////////////////
 // Adjust these for cup and coil
-cupDiameter = 60;
+cupDiameter = 80;
 coilDiameter = 30;
 coilInnerDiameter = 25;
 coilThickness = 2;
@@ -50,7 +52,7 @@ translate([0,0,0]) {
         // Cut out a hole to let wires through
         rotate([90,0,0])
             translate([0, circuitDepth, ((caseDiameter/2) - 5)])
-                #cylinder(h=innerWall+2, r=2);
+                #cylinder(h=innerWall+2, r=3);
 
         // Cut a place for an O-ring to better grip the cup.
         //translate([0,0,circuitDepth+cupDepth-1]) cylinder(h=baseThickness, d=cupDiameter+wallThickness);
@@ -59,12 +61,12 @@ translate([0,0,0]) {
 }
 
 // Base plate that goes above circuits and below cup.
-translate([0,cupDiameter+5,0]) {
+translate([0,cupDiameter+10,0]) {
     cylinder(h=baseThickness, d=cupDiameter);
 }
 
 // Charging Base curcuit holder
-translate([-(cupDiameter+5),0,0]) {
+translate([-(cupDiameter+10),0,0]) {
     difference() {
         cylinder(h=baseThickness+baseThickness+chargeDepth, d=caseDiameter);
 
@@ -81,7 +83,7 @@ translate([-(cupDiameter+5),0,0]) {
 }
 
 // Charging Base top plate.
-translate([-(cupDiameter+5),cupDiameter+5,0]) {
+translate([-(cupDiameter+10),cupDiameter+10,0]) {
     difference() {
         union() {
             cylinder(h=baseThickness, d=cupDiameter);
