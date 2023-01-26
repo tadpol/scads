@@ -5,6 +5,7 @@ $fn=0;
 
 use <parts/ballSwitch.scad>
 use <parts/usbMicroBPlug.scad>
+use <parts/bumpyCylinder.scad>
 
 // [width, length, depth]
 feather = [23,51,8];
@@ -53,8 +54,7 @@ knobLipHeight=1;
 bumpSize=4;
 
 baseHeight=10;
-baseBumps = 2;
-bumpGap = 1;
+baseBumps = [0, 5.25];
 useBallSwitch = true;
 
 baseBottomThickness = 2;
@@ -113,83 +113,32 @@ union() {
 	}
 }
 
-/*
-	@param h Cylinder height
-	@param rr Ring Radius.
-	@param cr Cylinder radius
-	@param cspace Space between each cylinder
-*/
-module ring_of_cyliners(h=5, cr=3, cspace=0, rr=20) {
-	pi = 3.1416;
-	// How many degrees each cylinder needs at a distance of rr from 0
-	degrees = (180 * ((cr*2)+cspace)) / (rr*pi);
-	gapstep = (180 * (cspace/2)) / (rr*pi);
-	for(step=[0 : degrees : 360]) {
-		rotate([0,0,step-gapstep]) {
-			translate([rr,0,-(h/2)]) {
-				cylinder(h=h, r=cr);
-			}
-		}
-	}
-}
-/* For a ring_of_cyliners, rotate evenly to N of them.
-	@param rr Ring Radius.
-	@param cr Cylinder radius
-	@param cspace Space between each cylinder
-	@param count Number of steps around
-	@param alton Put every other child onto a ridge.
-*/
-module bump_location(cr=3, cspace=0, rr=20, count=2, alton=true) {
-	pi = 3.1416;
-	// How many degrees each cylinder needs at a distance of rr from 0
-	degrees = (180 * ((cr*2)+cspace)) / (rr*pi);
-	gapstep = (180 * (cspace/2)) / (rr*pi);
-	// How many cylinders will this make?
-	total = floor(360/degrees);
-	// How many to skip
-	skip = ceil(total / count);
-
-	for(step=[0 : (skip*degrees)*2 : 359]) {
-		rotate([0,0,step-gapstep]) {
-			children();
-		}
-	}
-	for(step=[skip*degrees + (alton?degrees/2:0) : (skip*degrees)*2 : 359]) {
-		rotate([0,0,step-gapstep]) {
-			children();
-		}
-	}
-}
-/*
-	The above ring_of_cyliners makes uneven hills and valleys.
-	The bump_location puts the bumps 50% off phase.
-
-	TODO: The hills/valleys need to be even.
-	TODO: 25% phase offset?
-*/
 
 // knob
-union() {
+!union() {
 	difference(){
 		cylinder(h=knobHeight, r=knobSize/2);
 		translate([0,0,-knobThick]) {
 			cylinder(h=knobHeight+knobThick+1, r=(knobSize/2)-knobThick);
 		}
+		b_radius = (knobSize/2)-(knobThick/2);
 		// Need to make a ring of divits.  So a ring of cylinders cut out.
-		translate([0,0,baseHeight/2+1])
-			ring_of_cyliners(h=bumpSize, cr=(bumpSize/2), cspace=bumpGap, rr=(knobSize/2)-(knobThick), $fs=0.1);
+		translate([0,0,baseHeight/2-bumpSize/2 +1])
+			bumpy_cylinder(r=b_radius, cr=bumpSize, h=bumpSize);
 
-		// Cutout to easily slide knob onto base.
-		bump_location(cr=(bumpSize/2), cspace=bumpGap, rr=(knobSize/2)-(knobThick)) {
-			translate([(knobSize/2)-(knobThick),0,-0.1]) {
-				cylinder(h=baseHeight/2-bumpSize/2+1.2, r=(bumpSize/2), $fs=0.1);
+		for(idx=baseBumps) {
+			// Cutout to easily slide knob onto base.
+			bumpy_cylinder_rotate_to(r=b_radius, cr=bumpSize, idx=idx) {
+				translate([(knobSize/2)-(knobThick),0,-0.1]) {
+					cylinder(h=baseHeight/2-bumpSize/2+1.2, r=(bumpSize/2), $fs=0.1);
+				}
 			}
-		}
 
-		// Show spheres for visual alignments.
-		%bump_location(cr=(bumpSize/2), cspace=bumpGap, rr=(knobSize/2)-(knobThick)) {
-			translate([(knobSize/2)-(knobThick)-knobGap,0,baseHeight/2+1]) {
-				sphere(d=bumpSize);
+			// Show spheres for visual alignments.
+			%bumpy_cylinder_rotate_to(r=b_radius, cr=bumpSize, idx=idx) {
+				translate([(knobSize/2)-(knobThick)-knobGap,0,baseHeight/2+1]) {
+					sphere(d=bumpSize);
+				}
 			}
 		}
 	}
@@ -235,7 +184,7 @@ module curve_edge(r=10,h=5,deg=90,thick=1) {
 
 
 // Ballswitch mount test
-!union(){
+union(){
 			translate([0,0,-baseBottomHeight]) {
 				cylinder(h=baseBottomHeight,r=knobSize/2);
 			}
@@ -245,9 +194,11 @@ module curve_edge(r=10,h=5,deg=90,thick=1) {
 		/*
 		For half of a given size of a divit at given radius, how many degrees?
 		*/
-		bump_location(cr=(bumpSize/2), cspace=bumpGap, rr=(knobSize/2)-(knobThick)) {
-			translate([dr-4.75,0,2+(baseHeight+3)/2]) {
-				rotate([90,0,90]) ballSwitchCutout(baseHeight+3, center=true, justcollar=true);
+		for(idx=baseBumps) {
+			bumpy_cylinder_rotate_to(r=(knobSize/2)-(knobThick/2), cr=bumpSize, idx=idx) {
+				translate([dr-4.75,0,2+(baseHeight+3)/2]) {
+					rotate([90,0,90]) ballSwitchCutout(baseHeight+3, center=true, justcollar=true);
+				}
 			}
 		}
 	}
@@ -261,9 +212,11 @@ union() {
 			// Add the bumps for clicking
 			if (useBallSwitch) {
 			} else {
-				bump_location(cr=(bumpSize/2), rr=(knobSize/2)-(knobThick), count=baseBumps) {
-					translate([(knobSize/2)-(knobThick)-knobGap,0,baseHeight/2]) {
-						sphere(d=bumpSize, $fs=0.1);
+				for(idx=baseBumps) {
+					bumpy_cylinder_rotate_to(r=(knobSize/2)-(knobThick/2), cr=bumpSize, idx=idx) {
+						translate([(knobSize/2)-(knobThick)-knobGap,0,baseHeight/2]) {
+							sphere(d=bumpSize, $fs=0.1);
+						}
 					}
 				}
 			}
@@ -287,22 +240,26 @@ union() {
 		}
 
 		if (useBallSwitch) {
-			bump_location(cr=(bumpSize/2), cspace=bumpGap, rr=(knobSize/2)-(knobThick)) {
-				translate([(knobSize/2)-(knobThick)-knobGap-4.75,0,2+(baseHeight+3)/2]) {
-					rotate([90,0,90])
-						ballSwitchCutout(baseHeight+3, center=true, justcollar=true);
+			for(idx=baseBumps) {
+				bumpy_cylinder_rotate_to(r=(knobSize/2)-(knobThick/2), cr=bumpSize, idx=idx) {
+					translate([(knobSize/2)-(knobThick)-knobGap-4.75,0,2+(baseHeight+3)/2]) {
+						rotate([90,0,90])
+							ballSwitchCutout(baseHeight+3, center=true, justcollar=true);
+					}
 				}
 			}
 		} else {
 			// Cutout for spring tabs.
-			bump_location(cr=(bumpSize/2), rr=(knobSize/2)-(knobThick), count=baseBumps) {
-				rotate([0,0,5]) {
-					translate([(knobSize/2)-knobThick-knobGap-2,0,0]) {
-						cube([2,1,baseHeight+1]);
+			for(idx=baseBumps) {
+				bumpy_cylinder_rotate_to(r=(knobSize/2)-(knobThick/2), cr=bumpSize, idx=idx) {
+					rotate([0,0,5]) {
+						translate([(knobSize/2)-knobThick-knobGap-2,0,0]) {
+							cube([2,1,baseHeight+1]);
+						}
+						curve_edge(r=knobSize/2-knobThick-knobGap-1, h=baseHeight+1, deg=40);
+						translate([0,0,-0.5])
+							curve_edge(r=knobSize/2-knobThick-knobGap+0.1, h=1.5, deg=40, thick=2.1);
 					}
-					curve_edge(r=knobSize/2-knobThick-knobGap-1, h=baseHeight+1, deg=40);
-					translate([0,0,-0.5])
-						curve_edge(r=knobSize/2-knobThick-knobGap+0.1, h=1.5, deg=40, thick=2.1);
 				}
 			}
 		}

@@ -31,6 +31,7 @@ module bumpy_cylinder(r=20, cr=4, h=1) {
 // out.
 // This seems to start a 1/4 off, why?
 module bumpy_cylinder_rotate_to(r=20, cr=4, idx=1) {
+echo([r,cr,idx]);
 	pi = 3.1416;
 	t_max = 1; // create polygon based on polar plot in the range of 0 < t <= t_max
 	function sine_thing(t,r=10,n=8) = r + sin(n*(t/t_max)*360); // a multi-lobed pattern
@@ -38,14 +39,17 @@ module bumpy_cylinder_rotate_to(r=20, cr=4, idx=1) {
 	total = ceil(360/degrees); // How many bumps (periods)
 	fragments = total*10; // How smooth is the wave
 	step = 360/total; // Degrees for each period.
-
+echo( (idx+0.25)* step);
 	rotate([0,0, (idx + 0.25)*step])
 		children();
 }
 
-bumpy_cylinder(r=20, cr=3);
-bumpy_cylinder_rotate_to(r=20, cr=3, idx=3.25)
-	translate([20,0,0])
+radius = 12;
+bs=4;
+
+bumpy_cylinder(r=radius, cr=bs);
+bumpy_cylinder_rotate_to(r=radius, cr=bs, idx=3)
+	translate([radius,0,0])
 		cylinder(r=1,h=4,$fn=10, center=true);
 
 // vim: set sw=2 ts=2 :
