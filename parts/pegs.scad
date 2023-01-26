@@ -50,6 +50,18 @@ function featherHuzzahESP8266_sizes(h=5) = [
   [h, 1.145, 1.91],
 ];
 
+// Things have a *lot* of overhang on the X-axis.
+function SparkFunThing_locations(edgeToPegCenter=2.79) = [
+  [12.06, edgeToPegCenter, 0],
+  [12.06, 20.32+edgeToPegCenter, 0],
+  [31.75+12.06, 20.32+edgeToPegCenter, 0],
+  [31.75+12.06, edgeToPegCenter, 0],
+];
+
+function SparkFunThing_sizes(h=3) = [
+  for (i=[0:3]) [h, 1.5, 2.79]
+];
+
 // ======================================================================
 // manyPegs(locations=featherTriWing_locations());
 manyPegs(locations=featherHuzzahESP8266_locations(), sizes=featherHuzzahESP8266_sizes());
