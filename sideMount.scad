@@ -30,8 +30,8 @@ battMountThick = 2;
 battMountLength = 20;
 
 lipoWidth = 21;
-lipoLength = 29;
-lipoDepth = 4;
+lipoLength = 35;
+lipoDepth = 6;
 
 featherWidth = 23;
 featherLength = 51;
@@ -191,7 +191,7 @@ union() {
 	}
 
 	// Show the battery for sighting
-	%translate([battMountThick, baseSize/4, featherDepth-lipoDepth])
+	%translate([battMountThick, baseSize/4 - (lipoLength/8), featherDepth-lipoDepth])
 		cube(size=[lipoWidth,lipoLength,lipoDepth]);
 
 	// Show the feather circuit board for sighting
