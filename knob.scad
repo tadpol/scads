@@ -3,6 +3,8 @@ $fs=1;
 $fa=1;
 $fn=0;
 
+include <parts/usbMicroBPlug.scad>;
+
 // [width, length, depth]
 feather = [23,51,8];
 //featherCircuitDepth = 2;
@@ -14,7 +16,9 @@ featherWing = [23, 51, 8]; // 8+?
 
 // SparkFun ESP32 Thing
 esp32Thing = [26, 59, 8];
+// TODO: descibe an opening for the USB
 esp32ThingMinSize = sqrt(pow(esp32Thing[0],2) + pow(esp32Thing[1],2));
+esp32Thing_usb_plugin = [8.5,0,2.6];
 
 /*
 featherTFTWidth = 65.0;
@@ -38,8 +42,8 @@ ringJ_thick = 3.6;
 knobThick=2;
 //knobSize=featherMinSize + (knobThick*2);
 //knobSize=featherTFTMinSize + (knobThick*2);
-//knobSize=max(ring24_outter+1, esp32ThingMinSize) + (knobThick*2);
-knobSize = 24 + (knobThick*2);
+knobSize=max(ring24_outter+1, esp32ThingMinSize) + (knobThick*2);
+//knobSize = 24 + (knobThick*2);
 echo(knobSize);
 knobHeight=20;
 knobGap=0.3;
@@ -50,15 +54,15 @@ bumpSize=3;
 
 baseHeight=10;
 baseBumps = 2;
+useBallSwitch = true;
 
-usbMicroBPlug = [12.33,29.1,8.04];
+// TODO: Offsets to align USB plug to circuit boards. (put these up by the boards.)
 baseBottomThickness = 2;
 baseBottomHeight = 10;
 circuitGap = 0.4;
 circuitGapV = [circuitGap,circuitGap,circuitGap];
 
 
-useBallSwitch = true;
 
 //rings
 module ring(o,i,h) {
@@ -123,7 +127,7 @@ module ring_of_cyliners(h=5, cr=3, rr=20) {
 }
 
 // knob
-!union() {
+union() {
 	difference(){
 		cylinder(h=knobHeight, r=knobSize/2);
 		translate([0,0,-knobThick]) {
@@ -208,7 +212,7 @@ union(){
 	}
 }*/
 
-union() {
+!union() {
 	difference() {
 		union() {
 			cylinder(h=baseHeight, r=(knobSize/2)-(knobThick)-knobGap);
@@ -269,15 +273,12 @@ union() {
 		}
 
 		// Cutout for circuits.
-		translate([-(esp32Thing[0]+circuitGap)/2, -(esp32Thing[1]+circuitGap)/2, -baseBottomHeight+baseBottomThickness])
+		translate([-(esp32Thing[0]+circuitGap)/2, -(esp32Thing[1]+circuitGap)/2, -baseBottomHeight+baseBottomThickness]) {
 			resize([0,0,baseBottomHeight+baseHeight])
 				cube(esp32Thing+circuitGapV);
 
-		//translate([-(feather[0]+0.4)/2, -(feather[1]+0.4)/2, -baseBottomHeight+baseBottomThickness])
-			//cube([feather[0]+0.4, feather[1]+0.4, baseHeight+baseBottomHeight]);
-		// TODO: cut out for USB port.
-		translate([-(10)/2, (feather[1]+0.4)/2-1, -baseBottomHeight+baseBottomThickness])
-				cube(usbMicroBPlug+circuitGapV);
+			usbMicroBPlug(plugin=esp32Thing_usb_plugin, plugcutout=true);
+		}
 	}
 }
 
