@@ -135,7 +135,7 @@ module ring_of_cyliners(h=5, cr=3, rr=20) {
 	@param count Number of steps around
 	@param alton Put every other child onto a ridge.
 */
-module bump_location(cr=3, rr=20, count=3, alton=true) {
+module bump_location(cr=3, rr=20, count=2, alton=true) {
 	pi = 3.1416;
 	// How many degrees each cylinder needs at a distance of rr from 0
 	degrees = (180 * (cr*2)) / (rr*pi);
@@ -144,7 +144,13 @@ module bump_location(cr=3, rr=20, count=3, alton=true) {
 	// How many to skip
 	skip = ceil(total / count);
 
-	for(step=[0 : skip*degrees : 359]) {
+	for(step=[0 : (skip*degrees)*2 : 359]) {
+		echo(step);
+		rotate([0,0,step]) {
+			children();
+		}
+	}
+	for(step=[skip*degrees + (alton?degrees/2:0) : (skip*degrees)*2 : 359]) {
 		echo(step);
 		rotate([0,0,step]) {
 			children();
@@ -163,15 +169,14 @@ module bump_location(cr=3, rr=20, count=3, alton=true) {
 		translate([0,0,baseHeight/2])
 			ring_of_cyliners(h=bumpSize, cr=(bumpSize/2), rr=(knobSize/2)-(knobThick), $fs=0.1);
 
-		// Only baseBumps divits need to be full height.
-		for(step=[0 : (360/baseBumps) : 360]) {
-			rotate([0,0,step]) {
-				translate([(knobSize/2)-(knobThick),0,-0.1]) {
-					cylinder(h=baseHeight/2, r=(bumpSize/2), $fs=0.1);
-				}
+		// Cutout to easily slide knob onto base.
+		bump_location(cr=(bumpSize/2), rr=(knobSize/2)-(knobThick)) {
+			translate([(knobSize/2)-(knobThick),0,-0.1]) {
+				cylinder(h=baseHeight/2-bumpSize/2+0.2, r=(bumpSize/2), $fs=0.1);
 			}
 		}
 
+		// Show spheres for visual alignments.
 		%bump_location(cr=(bumpSize/2), rr=(knobSize/2)-(knobThick)) {
 			translate([(knobSize/2)-(knobThick)-knobGap,0,baseHeight/2]) {
 				sphere(d=bumpSize);
@@ -228,18 +233,11 @@ union(){
 		/*
 		For half of a given size of a divit at given radius, how many degrees?
 		*/
-		for(step=[0, 180]) { // What is the right degree? How to math it?
-			rotate([0,0,step]) {
-				translate([dr-4.75,0,2+(baseHeight+3)/2]) {
-					rotate([90,0,90]) ballSwitchCutout(baseHeight+3, center=true, justcollar=true);
-				}
-			}
-		}
-		/*bump_location() {
+		bump_location(cr=(bumpSize/2), rr=(knobSize/2)-(knobThick)) {
 			translate([dr-4.75,0,2+(baseHeight+3)/2]) {
 				rotate([90,0,90]) ballSwitchCutout(baseHeight+3, center=true, justcollar=true);
 			}
-		}*/
+		}
 	}
 }
 
