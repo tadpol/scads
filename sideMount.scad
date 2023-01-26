@@ -19,7 +19,7 @@ zipTieThick = 2;
 zipToCup = 2; // Amount of material between the cup and the zip-tie
 
 coilDiameter = 38.5;
-coilInnerDiameter = 32.5;
+coilInnerDiameter = 29.5; //32.5;
 coilThickness = 2;
 
 coilCircutWidth = 10;
@@ -134,7 +134,7 @@ difference() {
 	}
 
 	// Cut out a place for the coil
-	translate([baseSize/2,baseSize/2,wallThickness-0.5])
+	translate([baseSize/2,baseSize/2,wallThickness-1.5])
 		difference() {
 			cylinder(h=coilThickness, d=coilDiameter);
 			translate([0,0,-1])
