@@ -188,20 +188,22 @@ module curve_edge(r=10,h=5,deg=90,thick=1) {
 
 module ballSwitch() {
 	union() {
-		//%cube([7.2, 7.2, 10.5]);
-		translate([0.5,0,4.5]) {
-			translate([3.5,3.5,1.9]) {
-				cylinder(r=3,h=2.1);
-				translate([0,0,2])
-					sphere(r=2);
+		pin=[0.5,1,4.5];
+		size=[7.35,7.35];
+		translate([pin[0],0,pin[2]]) {
+			translate([size[0]/2,size[1]/2,2.68]) {
+				cylinder(d=5.54,h=1.87);
+				translate([0,0,1.88])
+					sphere(d=3.75);
+					// Button depresses 0.5mm
 			}
-			cube([7,7,2]);
+			cube([size[0],size[1],2.68]);
 		}
 		// pins
-		cube([0.5,1,4.5]);
-		translate([0,6,0]) cube([0.5,1,4.5]);
-		translate([7.5,0,0]) cube([0.5,1,4.5]);
-		translate([7.5,6,0]) cube([0.5,1,4.5]);
+		cube(pin);
+		translate([0,size[1]-pin[1],0]) cube(pin);
+		translate([size[0]+pin[0],0,0]) cube(pin);
+		translate([size[0]+pin[0],size[1]-pin[1],0]) cube(pin);
 	}
 }
 
