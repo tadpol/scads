@@ -50,6 +50,7 @@ function featherHuzzahESP8266_sizes(h=5) = [
   [h, 1.145, 1.91],
 ];
 
+// ====================== SparkFun Thing ======================
 // Things have a *lot* of overhang on the X-axis.
 function SparkFunThing_locations(edgeToPegCenter=2.79) = [
   [12.06, edgeToPegCenter, 0],
@@ -59,6 +60,17 @@ function SparkFunThing_locations(edgeToPegCenter=2.79) = [
 ];
 
 function SparkFunThing_sizes(h=3) = [
+  for (i=[0:3]) [h, 1.5, 2.79]
+];
+
+// ====================== ProtoBoard - Square 2" ======================
+// https://www.sparkfun.com/products/8811 
+function ProtoBoard2_locations() = [
+  [6, 14, 0],
+  [50-6, 14, 0],
+  [25, 50-3, 0],
+];
+function ProtoBoard2_sizes(h=3) = [
   for (i=[0:3]) [h, 1.5, 2.79]
 ];
 
