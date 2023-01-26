@@ -13,6 +13,7 @@ mountingNutWidth = 4.5;
 mountingNutLength = mountingNutWidth;
 mountingNutDepth = 3;
 
+// Big zip-tie that goes around the cup and holds all of this on.
 zipTieWidth = 5;
 zipTieThick = 1;
 
@@ -41,8 +42,45 @@ wireD = 2;
 mountingScrewD = 3; // Good fit screw is M2.5
 mountingScrewLength = wallThickness*3 + featherDepth;
 
+// Want to try replacing the mountingScrew with small zip-ties.
+sztWidth = 3; // X
+sztThick = 1; // Y
+sztXinset = 2;
+sztYinset = 1;
+sztHeadThick = 2;
+
 baseSize = featherLength;
 
+//////////////////////////////////////////////////////////////////////////////
+module zip_tie_cutout(depth = featherDepth) {
+	for(ox=[sztXinset,baseSize-sztThick-sztXinset]) {
+		for(oy=[sztYinset,baseSize-sztWidth-sztYinset]) {
+			translate([ox,oy,0]) {
+				translate([0,0,-1])
+					cube(size=[sztThick,sztWidth,depth+2]);
+				//children();
+			}
+		}
+	}
+}
+module zip_tie_extra_cutout(depth = featherDepth) {
+	for(ox=[-sztXinset,baseSize-sztThick-sztXinset]) {
+		for(oy=[sztYinset,baseSize-sztWidth-sztYinset]) {
+			translate([ox,oy,depth]) {
+				children();
+			}
+		}
+	}
+}
+
+module screw_cutout() {
+	for(ox=[mountingScrewD/2+1,baseSize-(mountingScrewD/2)-1]) {
+		for(oy=[mountingScrewD/2+1,baseSize-(mountingScrewD/2)-1]) {
+			translate([ox,oy,-1])
+				cylinder(h=featherDepth+2, d=mountingScrewD);
+		}
+	}
+}
 ////////////////////////////
 // Lower part
 rotate([0,0,0])
@@ -67,18 +105,13 @@ difference() {
 			cylinder(h=zipTieWidth+2, d=cupDiameter);
 		}
 
-	// cutout for mounting screws
-	for(ox=[mountingScrewD/2+1,baseSize-(mountingScrewD/2)-1]) {
-		for(oy=[mountingScrewD/2+1,baseSize-(mountingScrewD/2)-1]) {
-			translate([ox,oy,-1]) {
-				cylinder(h=wallThickness, d=mountingScrewD);
-				translate([0,0,wallThickness])
-				cube(size=[mountingNutWidth+2,mountingNutLength,mountingNutDepth], center=true);
-			}
-		}
+	// cutout for mounting zip-ties
+	zip_tie_cutout(depth=wallThickness);
+	// side-extention cutouts
+	zip_tie_extra_cutout(depth=wallThickness) {
+		cube(size=[5,sztWidth,sztThick]);
 	}
 
-	// Cutout for nuts
 }
 
 ////////////////////////////
@@ -88,12 +121,11 @@ translate([baseSize+5, 0, 0])
 difference() {
 	cube(size=[baseSize,baseSize,wallThickness]);
 
-	// cutout for mounting screws
-	for(ox=[mountingScrewD/2+1,baseSize-(mountingScrewD/2)-1]) {
-		for(oy=[mountingScrewD/2+1,baseSize-(mountingScrewD/2)-1]) {
-			translate([ox,oy,-1])
-				cylinder(h=wallThickness+2, d=mountingScrewD);
-		}
+	// cutout for mounting zip-ties
+	zip_tie_cutout();
+	// side-extention cutouts
+	zip_tie_extra_cutout(depth=wallThickness-sztHeadThick) {
+		cube(size=[5,sztWidth,sztHeadThick+1]);
 	}
 
 	// Cut out a place for the coil
@@ -130,13 +162,9 @@ union() {
 				}
 			}
 		}
-		// cutout for mounting screws
-		for(ox=[mountingScrewD/2+1,baseSize-(mountingScrewD/2)-1]) {
-			for(oy=[mountingScrewD/2+1,baseSize-(mountingScrewD/2)-1]) {
-				translate([ox,oy,-1])
-					cylinder(h=featherDepth+2, d=mountingScrewD);
-			}
-		}
+		// cutout for mounting zip-ties
+		zip_tie_cutout();
+
 		// cut off tops for holding the circuit board
 		translate([baseSize-(mountingScrewD+2)-0.5, -0.5, featherDepth-featherCircuitDepth])
 			cube(size=[mountingScrewD+3, baseSize+1, featherCircuitDepth+1]);
