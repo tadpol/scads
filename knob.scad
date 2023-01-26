@@ -119,7 +119,7 @@ module ring_of_cyliners(h=5, cr=3, rr=20) {
 }
 
 // knob
-!union() {
+union() {
 	difference(){
 		cylinder(h=knobHeight, r=knobSize/2);
 		translate([0,0,-knobThick]) {
@@ -188,24 +188,24 @@ module curve_edge(r=10,h=5,deg=90,thick=1) {
 
 module ballSwitch() {
 	union() {
-	//%cube([7.2, 7.2, 10.5]);
-	translate([0.5,0,4.5]) {
-		translate([3.5,3.5,1.9]) {
-			cylinder(r=3,h=2.1);
-			translate([0,0,2])
-				sphere(r=2);
+		//%cube([7.2, 7.2, 10.5]);
+		translate([0.5,0,4.5]) {
+			translate([3.5,3.5,1.9]) {
+				cylinder(r=3,h=2.1);
+				translate([0,0,2])
+					sphere(r=2);
+			}
+			cube([7,7,2]);
 		}
-		cube([7,7,2]);
-	}
-	// pins
-	cube([0.5,1,4.5]);
-	translate([0,6,0]) cube([0.5,1,4.5]);
-	translate([7.5,0,0]) cube([0.5,1,4.5]);
-	translate([7.5,6,0]) cube([0.5,1,4.5]);
+		// pins
+		cube([0.5,1,4.5]);
+		translate([0,6,0]) cube([0.5,1,4.5]);
+		translate([7.5,0,0]) cube([0.5,1,4.5]);
+		translate([7.5,6,0]) cube([0.5,1,4.5]);
 	}
 }
 
-union() {
+!union() {
 	difference() {
 		union() {
 			cylinder(h=baseHeight, r=(knobSize/2)-(knobThick)-knobGap);
@@ -229,16 +229,19 @@ union() {
 		}
 
 		if (useBallSwitch) {
-			// TODO: Don't forget that they need to be inserted somehow!
 			// FIXME: One needs to be on the ridge of a divit while the other is inside.
 			//for(step=[0 : (360/baseBumps) : 360]) {
 			for(step=[0, 185]) { // What is the right degree? How to math it?
 				rotate([0,0,step]) {
 					translate([(knobSize/2)-(knobThick)-knobGap-9,-3.5,baseHeight/2+3.5]) {
-						rotate([0,90,0]) ballSwitch();
-					}
-					translate([(knobSize/2)-(knobThick)-knobGap-9,-3.5,baseHeight/2]) {
-						cube([7,7,10]);
+						minkowski() {
+							rotate([0,90,0]) ballSwitch();
+							cube([0.1,0.1,baseHeight]);
+						}
+						/*hull() {
+							rotate([0,90,0]) ballSwitch();
+							translate([0,0,baseHeight/2]) rotate([0,90,0]) ballSwitch();
+						}*/
 					}
 				}
 			}
