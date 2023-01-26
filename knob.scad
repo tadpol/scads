@@ -276,6 +276,11 @@ union(){
 
 			usbMicroBPlug(plugin=esp32Thing_usb_plugin, gap=0.5, plugcutout=true);
 		}
+
+		// Cutout for pushing the mainboard out.
+		translate([0,0,-baseBottomHeight+baseBottomThickness-4]) {
+			cylinder(r=2.5, h=5);
+		}
 	}
 }
 
