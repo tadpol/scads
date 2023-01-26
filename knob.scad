@@ -98,19 +98,20 @@ module ring_support_spoke(width=10, depth=2) {
 	}
 }
 ring_raised = knobHeight - ring24_thick - knobLipHeight - 2;
-translate([0,0,ring_raised])
-union() {
-	rotate([0,0,45]) {
-		ring_support_spoke();
-		rotate([0,0,90]) ring_support_spoke();
-	}
+translate([0,0,ring_raised]) {
+	union() {
+		rotate([0,0,45]) {
+			ring_support_spoke();
+			rotate([0,0,90]) ring_support_spoke();
+		}
 
 
-	%translate([0,0,2]) {
-		ring(ring24_outter, ring24_inner, ring24_thick);
-		ring(ring16_outter, ring16_inner, ring16_thick);
-		//translate([0,0,ring16_thick+1]) ring(ring12_outter, ring12_inner, ring12_thick);
-		ring(ringJ_outter, ringJ_inner, ringJ_thick);
+		%translate([0,0,2]) {
+			ring(ring24_outter, ring24_inner, ring24_thick);
+			ring(ring16_outter, ring16_inner, ring16_thick);
+			//translate([0,0,ring16_thick+1]) ring(ring12_outter, ring12_inner, ring12_thick);
+			ring(ringJ_outter, ringJ_inner, ringJ_thick);
+		}
 	}
 }
 
