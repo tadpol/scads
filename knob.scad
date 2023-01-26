@@ -162,7 +162,7 @@ module bump_location(cr=3, cspace=0, rr=20, count=2, alton=true) {
 }
 
 // knob
-!union() {
+union() {
 	difference(){
 		cylinder(h=knobHeight, r=knobSize/2);
 		translate([0,0,-knobThick]) {
@@ -246,7 +246,7 @@ union(){
 	}
 }
 
-union() {
+!union() {
 	difference() {
 		union() {
 			cylinder(h=baseHeight, r=(knobSize/2)-(knobThick)-knobGap);
@@ -254,11 +254,9 @@ union() {
 			// Add the bumps for clicking
 			if (useBallSwitch) {
 			} else {
-				for(step=[0 : (360/baseBumps) : 360]) {
-					rotate([0,0,step]) {
-						translate([(knobSize/2)-(knobThick)-knobGap,0,baseHeight/2]) {
-							sphere(d=bumpSize, $fs=0.1);
-						}
+				bump_location(cr=(bumpSize/2), rr=(knobSize/2)-(knobThick), count=baseBumps) {
+					translate([(knobSize/2)-(knobThick)-knobGap,0,baseHeight/2]) {
+						sphere(d=bumpSize, $fs=0.1);
 					}
 				}
 			}
@@ -282,26 +280,22 @@ union() {
 		}
 
 		if (useBallSwitch) {
-			// FIXME: One needs to be on the ridge of a divit while the other is inside.
-			//for(step=[0 : (360/baseBumps) : 360]) {
-			for(step=[0, 185]) { // What is the right degree? How to math it?
-				rotate([0,0,step]) {
-					translate([(knobSize/2)-(knobThick)-knobGap-4.75,-3.5,baseHeight/2 + 2]) {
-						rotate([90,0,90])
-							ballSwitchCutout(baseHeight+3, center=true, justcollar=true);
-					}
+			bump_location(cr=(bumpSize/2), cspace=bumpGap, rr=(knobSize/2)-(knobThick)) {
+				translate([(knobSize/2)-(knobThick)-knobGap-4.75,0,2+(baseHeight+3)/2]) {
+					rotate([90,0,90])
+						ballSwitchCutout(baseHeight+3, center=true, justcollar=true);
 				}
 			}
 		} else {
 			// Cutout for spring tabs.
-			for(step=[10 : (360/baseBumps) : 370]) {
-				rotate([0,0,step]) {
+			bump_location(cr=(bumpSize/2), rr=(knobSize/2)-(knobThick), count=baseBumps) {
+				rotate([0,0,5]) {
 					translate([(knobSize/2)-knobThick-knobGap-2,0,0]) {
 						cube([2,1,baseHeight+1]);
 					}
-					curve_edge(r=knobSize/2-knobThick-knobGap-1, h=baseHeight+1, deg=45);
+					curve_edge(r=knobSize/2-knobThick-knobGap-1, h=baseHeight+1, deg=40);
 					translate([0,0,-0.5])
-						curve_edge(r=knobSize/2-knobThick-knobGap+0.1, h=1.5, deg=45, thick=2.1);
+						curve_edge(r=knobSize/2-knobThick-knobGap+0.1, h=1.5, deg=40, thick=2.1);
 				}
 			}
 		}
