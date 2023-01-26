@@ -15,7 +15,8 @@ mountingNutDepth = 3;
 
 // Big zip-tie that goes around the cup and holds all of this on.
 zipTieWidth = 5;
-zipTieThick = 1;
+zipTieThick = 2;
+zipToCup = 2; // Amount of material between the cup and the zip-tie
 
 coilDiameter = 38.5;
 coilInnerDiameter = 32.5;
@@ -83,7 +84,6 @@ module screw_cutout() {
 }
 ////////////////////////////
 // Lower part
-rotate([0,0,0])
 difference() {
 	cube(size=[baseSize,baseSize,15]);
 
@@ -92,18 +92,17 @@ difference() {
 		cube(size=[baseSize-(wallThickness*2),baseSize-(wallThickness*2),10]);
 
 	// Cutout the curve of the mug
-	translate([baseSize/2, -2.5, (cupDiameter/2)+2])
+	translate([baseSize/2, -1, (cupDiameter/2)+2]) // -1 to extend cutout past edges
 		rotate([-90,0,0])
-			cylinder(h=baseSize+5, d=cupDiameter);
+			cylinder(h=baseSize+2, d=cupDiameter);
 
 	// Cutout path for zip-tie.
-	// FIXME: requires magic number to get placed correctly; don't do that.
-	rotate([90,0,0])
-	translate([baseSize/2,baseSize - 12,-baseSize/2 - 5])
+	translate([baseSize/2, (baseSize/2)-(zipTieWidth/2), (cupDiameter/2)])
+	rotate([-90,0,0])
 		difference() {
-			cylinder(h=zipTieWidth, d=cupDiameter+(zipTieThick*2));
+			cylinder(h=zipTieWidth, d=cupDiameter+(zipTieThick*2)+zipToCup);
 			translate([0,0,-1])
-			cylinder(h=zipTieWidth+2, d=cupDiameter);
+				cylinder(h=zipTieWidth+2, d=cupDiameter+zipToCup);
 		}
 
 	// cutout for mounting zip-ties
