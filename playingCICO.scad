@@ -8,8 +8,8 @@ $fs=1;
 // Adjust these for cup and coil
 cupDiameter = 80;
 
-coilDiameter = 38;
-coilInnerDiameter = 33;
+coilDiameter = 38.5;
+coilInnerDiameter = 32.5;
 coilThickness = 2;
 
 wallThickness = 2;
