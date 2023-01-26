@@ -162,26 +162,26 @@ module bump_location(cr=3, cspace=0, rr=20, count=2, alton=true) {
 }
 
 // knob
-union() {
+!union() {
 	difference(){
 		cylinder(h=knobHeight, r=knobSize/2);
 		translate([0,0,-knobThick]) {
 			cylinder(h=knobHeight+knobThick+1, r=(knobSize/2)-knobThick);
 		}
 		// Need to make a ring of divits.  So a ring of cylinders cut out.
-		translate([0,0,baseHeight/2])
+		translate([0,0,baseHeight/2+1])
 			ring_of_cyliners(h=bumpSize, cr=(bumpSize/2), cspace=bumpGap, rr=(knobSize/2)-(knobThick), $fs=0.1);
 
 		// Cutout to easily slide knob onto base.
 		bump_location(cr=(bumpSize/2), cspace=bumpGap, rr=(knobSize/2)-(knobThick)) {
 			translate([(knobSize/2)-(knobThick),0,-0.1]) {
-				cylinder(h=baseHeight/2-bumpSize/2+0.2, r=(bumpSize/2), $fs=0.1);
+				cylinder(h=baseHeight/2-bumpSize/2+1.2, r=(bumpSize/2), $fs=0.1);
 			}
 		}
 
 		// Show spheres for visual alignments.
 		%bump_location(cr=(bumpSize/2), cspace=bumpGap, rr=(knobSize/2)-(knobThick)) {
-			translate([(knobSize/2)-(knobThick)-knobGap,0,baseHeight/2]) {
+			translate([(knobSize/2)-(knobThick)-knobGap,0,baseHeight/2+1]) {
 				sphere(d=bumpSize);
 			}
 		}
@@ -246,7 +246,7 @@ union(){
 	}
 }
 
-!union() {
+union() {
 	difference() {
 		union() {
 			cylinder(h=baseHeight, r=(knobSize/2)-(knobThick)-knobGap);
