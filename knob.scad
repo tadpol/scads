@@ -186,28 +186,37 @@ module curve_edge(r=10,h=5,deg=90,thick=1) {
 	}
 }
 
-module ballSwitch() {
-	union() {
-		pin=[0.5,1,4.5];
-		size=[7.35,7.35];
-		translate([pin[0],0,pin[2]]) {
-			translate([size[0]/2,size[1]/2,2.68]) {
-				cylinder(d=5.54,h=1.87);
-				translate([0,0,1.88])
-					sphere(d=3.75);
-					// Button depresses 0.5mm
+include <parts/ballSwitch.scad>
+
+// Ballswitch mount test
+!union(){
+	difference() {
+		dr=12;
+		cylinder(h=baseHeight, r=dr);
+		for(step=[0, 185]) { // What is the right degree? How to math it?
+			rotate([0,0,step]) {
+				translate([dr-5.5,-3.5,(baseHeight*2)+baseHeight/6]) {
+				// FIXME: This is too tight.  Had to rebend pins and push hard to insert
+				// switch.  And am pretty sure it no longer works.
+				// Maybe make the cube in the minkowski bigger? Tried that.
+				// Need to do this differently.  I think add a special object to create the
+				// cutout.
+					rotate([0,90,0]) ballSwitchCutout(baseHeight*2);
+					/*minkowski() {
+						rotate([0,90,0]) ballSwitch();
+						cube([0.3,0.3,baseHeight]);
+					}
+					hull() {
+						rotate([0,90,0]) ballSwitch();
+						translate([0,0,baseHeight/2]) rotate([0,90,0]) ballSwitch();
+						}*/
+				}
 			}
-			cube([size[0],size[1],2.68]);
 		}
-		// pins
-		cube(pin);
-		translate([0,size[1]-pin[1],0]) cube(pin);
-		translate([size[0]+pin[0],0,0]) cube(pin);
-		translate([size[0]+pin[0],size[1]-pin[1],0]) cube(pin);
 	}
 }
 
-!union() {
+union() {
 	difference() {
 		union() {
 			cylinder(h=baseHeight, r=(knobSize/2)-(knobThick)-knobGap);
@@ -235,7 +244,7 @@ module ballSwitch() {
 			//for(step=[0 : (360/baseBumps) : 360]) {
 			for(step=[0, 185]) { // What is the right degree? How to math it?
 				rotate([0,0,step]) {
-					translate([(knobSize/2)-(knobThick)-knobGap-9,-3.5,baseHeight/2+3.5]) {
+					translate([(knobSize/2)-(knobThick)-knobGap-10,-3.5,baseHeight/2+3.5]) {
 						minkowski() {
 							rotate([0,90,0]) ballSwitch();
 							cube([0.1,0.1,baseHeight]);
