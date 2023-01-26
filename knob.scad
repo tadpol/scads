@@ -3,21 +3,36 @@ $fs=1;
 $fa=1;
 $fn=0;
 
-/* The TFT display board has a 84mm diangle.
- * So that plus thickness to get outer diameter
-*/
-
 featherWidth = 23;
 featherLength = 51;
 featherDepth = 8; // includes components
 featherCircuitDepth = 2;
+featherMinSize = sqrt(pow(featherWidth,2)+pow(featherLength,2));
+echo(featherMinSize);
 
-featherTFTWidth = 23;
-featherTFTLength = 51;
+featherTFTWidth = 65.0;
+featherTFTLength = 53;
+featherTFTHight = 9.5;
+featherTFTMinSize = sqrt(pow(featherTFTWidth,2)+pow(featherTFTLength,2));
+echo(featherTFTMinSize);
+
+ring24_outter = 65.6;
+ring24_inner = 52.3;
+ring24_thick = 6.7;
+ring16_outter = 44.5;
+ring16_inner = 31.75;
+ring16_thick = 3.25;
+ring12_outter = 36.8;
+ring12_inner = 23.3;
+ring12_thick = 3.25;
+ringJ_outter = 23;
+ringJ_inner = 0;
+ringJ_thick = 2;
 
 knobThick=2;
-//knobSize=84+4; // Diameter
-knobSize=sqrt(pow(featherWidth,2)+pow(featherLength,2)) + (knobThick*2);
+//knobSize=featherMinSize + (knobThick*2);
+//knobSize=featherTFTMinSize + (knobThick*2);
+knobSize=ring24_outter + (knobThick*2);
 knobHeight=20;
 knobGap=0.3;
 knobLipWidth=1;
@@ -28,26 +43,22 @@ bumpSize=3;
 baseHeight=10;
 baseBumps = 2;
 
-module slice(r = 10, deg = 30) {
-	degn = (deg % 360 > 0) ? deg % 360 : deg % 360 + 360;
-	difference() {
-		circle(r);
-		if (degn > 180) intersection_for(a = [0, 180 - degn]) rotate(a) translate([-r, 0, 0]) square(r * 2);
-		else union() for(a = [0, 180 - degn]) rotate(a) translate([-r, 0, 0]) square(r * 2);
+//rings
+module ring(o,i,h) {
+	difference(){
+			cylinder(h=h, r=o);
+		translate([0,0,-0.1])
+			cylinder(h=h+0.2, r=i);
 	}
 }
-
-module curve_edge(r=10,h=5,deg=90,thick=1) {
-	difference() {
-		linear_extrude(height=h, center=false, convexity=10, twist=0, slices=20) {
-			slice(r,deg);
-		}
-		translate([0,0,-0.5])
-			rotate([0,0,0.5])
-			linear_extrude(height=h+1, center=false, convexity=10, twist=0, slices=20) {
-				slice(r-thick,deg+1);
-			}
-	}
+union() {
+	ring(ring24_outter, ring24_inner, ring24_thick);
+	translate([0,0,ring24_thick])
+		ring(ring16_outter, ring16_inner, ring16_thick);
+	translate([0,0,ring16_thick+ring24_thick+1])
+		ring(ring12_outter, ring12_inner, ring12_thick);
+	translate([0,0,ring16_thick+ring24_thick+1+ring12_thick])
+		ring(ringJ_outter, ringJ_inner, ringJ_thick);
 }
 
 // knob
@@ -92,6 +103,28 @@ module curve_edge(r=10,h=5,deg=90,thick=1) {
 }
 
 // base
+module slice(r = 10, deg = 30) {
+	degn = (deg % 360 > 0) ? deg % 360 : deg % 360 + 360;
+	difference() {
+		circle(r);
+		if (degn > 180) intersection_for(a = [0, 180 - degn]) rotate(a) translate([-r, 0, 0]) square(r * 2);
+		else union() for(a = [0, 180 - degn]) rotate(a) translate([-r, 0, 0]) square(r * 2);
+	}
+}
+
+module curve_edge(r=10,h=5,deg=90,thick=1) {
+	difference() {
+		linear_extrude(height=h, center=false, convexity=10, twist=0, slices=20) {
+			slice(r,deg);
+		}
+		translate([0,0,-0.5])
+			rotate([0,0,0.5])
+			linear_extrude(height=h+1, center=false, convexity=10, twist=0, slices=20) {
+				slice(r-thick,deg+1);
+			}
+	}
+}
+
 union() {
 	difference() {
 		union() {
