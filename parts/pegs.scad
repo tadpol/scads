@@ -93,7 +93,7 @@ function SparkFunThing_locations(edgeToPegCenter=2.79) = [
 ];
 
 function SparkFunThing_sizes(h=3) = [
-  for (i=[0:3]) [h, 1.5, 2.79]
+  for (i=[0:3]) [h, 3.2, 2.79]
 ];
 
 // ====================== ProtoBoard - Square 2" ======================
@@ -107,6 +107,18 @@ function ProtoBoard2_sizes(h=3) = [
   for (i=[0:3]) [h, 1.5, 2.79]
 ];
 
+// ===================== Solderable Breadboard ========================
+function Breadboard_half_locations() = [
+  [5.2,      5.15,      0],
+  [5.2,      5.15+83.7, 0],
+  [5.2+53.3, 5.15+83.7, 0],
+  [5.2+53.3, 5.15,      0],
+];
+function Breadboard_half_sizes(h=3) = [
+  for (i=[0:3]) [h, 1.5, 2.79]
+];
+
 // ======================================================================
 // manyPegs(locations=featherTriWing_locations());
-manyPegs(locations=featherHuzzahESP8266_locations(), sizes=featherHuzzahESP8266_sizes());
+// manyPegs(locations=featherHuzzahESP8266_locations(), sizes=featherHuzzahESP8266_sizes());
+manyPegs(locations=Breadboard_half_locations(), sizes=Breadboard_half_sizes());
